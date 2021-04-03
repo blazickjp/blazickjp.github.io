@@ -23,7 +23,7 @@ params:
   math:
     enable: yes
     use: mathjax
-  profilePicture: images/joe1.jpg
+  profilePicture: images/joe2.jpg
   simpleAnalytics: {}
   socialIcons:
     - icon: fab fa-linkedin
