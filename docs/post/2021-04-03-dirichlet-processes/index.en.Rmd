@@ -56,7 +56,13 @@ fig.suptitle("Number of Clusters (alpha = 10)")
 ax.grid()
 plt.xlabel("N")
 plt.ylabel("Number Unique Clusters")
-plt.show()
+fig.savefig("num_clusters.png")
+plt.close(fig)
+```
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("num_clusters.png")
+
 ```
 
 It's rather obvious to see that the number of clusters grows logarithmic in $\alpha$, and we can actually plot the expected value in red as:
@@ -101,8 +107,12 @@ fig.suptitle("Stick Breaking Process (alpha = 10)")
 ax.grid()
 plt.xlabel("Iteration")
 plt.ylabel("Class Assignment")
-fig.show()
+fig.savefig("stick_breaking.png")
+plt.close(fig)
+```
 
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("stick_breaking.png")
 ```
 
 ### Dirichlet Processes
