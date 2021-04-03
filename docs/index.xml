@@ -6,7 +6,16 @@
     <description>Recent content on Website of Joseph Blazick</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 13 Mar 2021 21:47:41 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Testing</title>
+      <link>http://blazickjp.github.io/post/2021-04-03-testing/</link>
+      <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://blazickjp.github.io/post/2021-04-03-testing/</guid>
+      <description>Test new Post</description>
+    </item>
+    
     <item>
       <title>The Figure Shortcode</title>
       <link>http://blazickjp.github.io/post/figure-shortcode/</link>
