@@ -1,1 +1,0 @@
-# blazickjp.github.io
