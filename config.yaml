@@ -21,8 +21,8 @@ params:
   keywords: ''
   mainSections: post
   math:
-    enable: yes
-    use: mathjax
+    enable: true
+    use: "mathjax"
   profilePicture: images/joe2.jpg
   simpleAnalytics: {}
   socialIcons:
