@@ -8,12 +8,12 @@
     <language>en</language>
     <lastBuildDate>Sat, 03 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Testing</title>
+      <title>Deriving Complete Conditionals for GMM Gibbs Sampling</title>
       <link>http://blazickjp.github.io/post/2021-04-03-testing/</link>
       <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2021-04-03-testing/</guid>
-      <description>Test new Post</description>
+      <description>Gibbs Sampling Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined as $p(\theta|data)$.</description>
     </item>
     
     <item>
