@@ -1,4 +1,5 @@
-baseurl: /
+baseurl: http://blazickjp.github.io/
+publishDir: docs/
 languageCode: en-us
 title: A Hugo website
 theme: hugo-lithium
