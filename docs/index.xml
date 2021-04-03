@@ -6,14 +6,14 @@
     <description>Recent content on Website of Joseph Blazick</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 13 Mar 2021 21:47:41 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>The Figure Shortcode</title>
-      <link>http://blazickjp.github.io/post/figure-shortcode/</link>
-      <pubDate>Sat, 13 Mar 2021 21:47:41 +0000</pubDate>
+      <title>Dirichlet Process</title>
+      <link>http://blazickjp.github.io/post/2021-04-03-dirichlet-process/</link>
+      <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>http://blazickjp.github.io/post/figure-shortcode/</guid>
-      <description>Hugo has figure shortcode built-in, so you can easily add figure captions or hyperlink rel attributes to images.</description>
+      <guid>http://blazickjp.github.io/post/2021-04-03-dirichlet-process/</guid>
+      <description>Extending to Infinite Components After working with mixture models, it’s natural to wonder how one should best determine the correct number of components to include in our models.</description>
     </item>
     
     <item>
