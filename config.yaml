@@ -1,39 +1,59 @@
-baseurl: http://blazickjp.github.io/
+baseURL: http://blazickjp.github.io
 publishDir: docs
-languageCode: en-us
-title: A Hugo website
-theme: "anatole"
-googleAnalytics: ''
-disqusShortname: ''
-ignoreFiles:
-  - \.Rmd$
-  - \.Rmarkdown$
-  - _cache$
-  - \.knit\.md$
-  - \.utf8\.md$
-permalinks:
-  post: /:year/:month/:day/:slug/
+languageCode: en
+DefaultContentLanguage: en
+title: Website of Jane Doe
+theme: anatole
+summarylength: 10
+enableEmoji: yes
+enableRobotsTXT: yes
+pygmentsUseClasses: yes
+pygmentsCodeFences: yes
+pygmentsCodefencesGuessSyntax: yes
+params:
+  author: Jane Doe
+  customCss: []
+  customJs: []
+  description: Call me Jane
+  doNotLoadAnimations: no
+  favicon: favicons/
+  images: images/site-feature-image.png
+  keywords: ''
+  mainSections: post
+  math:
+    enable: no
+    use: katex
+  profilePicture: images/profile.jpg
+  simpleAnalytics: {}
+  socialIcons:
+    - icon: fab fa-linkedin
+      title: Linkedin
+      url: https://de.linkedin.com/
+    - icon: fab fa-github
+      title: GitHub
+      url: https://github.com/lxndrblz/anatole/
+    - icon: fab fa-instagram
+      title: instagram
+      url: https://www.instagram.com/
+    - icon: fas fa-envelope
+      title: e-mail
+      url: mailto:mail@example.com
+  title: I'm Jane Doe
 menu:
   main:
-    - name: About
+    - identifier: home
+      name: Home
+      url: /
+      weight: 100
+    - identifier: posts
+      name: Posts
+      url: /post/
+      weight: 200
+    - identifier: about
+      name: About
       url: /about/
-    - name: GitHub
-      url: https://github.com/rstudio/blogdown
-    - name: Twitter
-      url: https://twitter.com/rstudio
-params:
-  MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
-  MathJaxVersion: 2.7.5
-  description: A website built through Hugo and blogdown.
-  favicon: favicon.ico
-  highlightjsCDN: //cdnjs.cloudflare.com/ajax/libs
-  highlightjsLang:
-    - r
-    - yaml
-  highlightjsTheme: github
-  highlightjsVersion: 9.12.0
-  logo:
-    alt: Logo
-    height: 50
-    url: logo.png
-    width: 50
+      weight: 300
+    - identifier: contact
+      name: Contact
+      url: /contact/
+      weight: 400
