@@ -2,8 +2,7 @@
 title: "Deriving Complete Conditionals for GMM Gibbs Sampling"
 author: "Joseph Blazick"
 date: '2021-04-03'
-header_includes:
-- \usepackage{algorithmic}
+header_includes: \usepackage{algorithmic}
 categories: []
 tags: []
 Description: Blah Blah Blah
@@ -12,7 +11,7 @@ Categories: []
 DisableComments: no
 slug: []
 ---
-```{r}
+```{r, echo=FALSE, warning=FALSE}
 library(reticulate)
 ```
 
@@ -21,18 +20,18 @@ library(reticulate)
 Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined 
 as $p(\theta|data)$. The idea behind the Gibbs Sampler is to sweep through each one of the parameters and sample from their conditional distributions, fixing the other parameters constant. For example, consider the random variables $X_1, X_2, X_3$ and assume that I can write out the analytic form of $p(X_1|X_2,X_3), p(X_2|X_1,X_3), p(X_3|X_2,X_1)$ . We start by initializing $x_{1,t}, x_{2,t}, x_{3,t}$ and for each iteration $t$ we sample $p(X_{1,t+1}|X_{2,t},X_{3,t})$, $p(X_{2,t+1}|X_{1,t+1},X_{3,t})$, and $p(X_{3,t+1}|X_{2,t+1},X_{3,t+1})$. This process can then continue until convergence. Algorithm 1 details a general Gibbs Sampler.
 
-<!-- \begin{algorithm} -->
-<!-- \caption{Gibbs Sampling} -->
-<!-- \begin{algorithmic} -->
-<!--     \STATE initialize $x_0 \sim q(x)$ -->
-<!--         \FOR{$i = 1, 2, ...$}  -->
-<!--             \STATE $x_{1,i} \sim p(X_1 = x_1 | X_2 = x_{2,i-1}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$ -->
-<!--             \STATE $x_{2,i} \sim p(X_2 = x_2 | X_1 = x_{1,i}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$ -->
-<!--             \STATE $x_{3,i} \sim p(X_3 = x_3 | X_1 = x_{1,i}, X_2 = x_{2,i}, ..., X_k = x_{k,i-1})$ -->
+\begin{algorithm}
+\caption{Gibbs Sampling}
+\begin{algorithmic}
+    \STATE initialize $x_0 \sim q(x)$
+        \FOR{$i = 1, 2, ...$}
+            \STATE $x_{1,i} \sim p(X_1 = x_1 | X_2 = x_{2,i-1}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$
+            \STATE $x_{2,i} \sim p(X_2 = x_2 | X_1 = x_{1,i}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$
+            \STATE $x_{3,i} \sim p(X_3 = x_3 | X_1 = x_{1,i}, X_2 = x_{2,i}, ..., X_k = x_{k,i-1})$
 
-<!--     \ENDFOR -->
-<!-- \end{algorithmic} -->
-<!-- \end{algorithm} -->
+    \ENDFOR
+\end{algorithmic}
+\end{algorithm}
 
 ## Mixture of Normals
 
