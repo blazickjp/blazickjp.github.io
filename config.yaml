@@ -28,16 +28,13 @@ params:
   socialIcons:
     - icon: fab fa-linkedin
       title: Linkedin
-      url: https://de.linkedin.com/
+      url: https://www.linkedin.com/in/joe-blazick-119307a2/
     - icon: fab fa-github
       title: GitHub
-      url: https://github.com/lxndrblz/anatole/
-    - icon: fab fa-instagram
-      title: instagram
-      url: https://www.instagram.com/
+      url: https://github.com/blazickjp
     - icon: fas fa-envelope
       title: e-mail
-      url: mailto:mail@example.com
+      url: mailto:joe.blazick@yahoo.com
   title: I'm Joseph Blazick
 menu:
   main:
