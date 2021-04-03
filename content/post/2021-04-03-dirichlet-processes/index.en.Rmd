@@ -4,7 +4,7 @@ author: Joseph Blazick
 date: '2021-04-03'
 output:
   blogdown::html_page:
-    highlight: tango
+    highlight: kate
 slug: []
 categories: []
 tags: []
