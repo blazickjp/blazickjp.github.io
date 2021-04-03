@@ -13,7 +13,7 @@
       <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2021-04-03-testing/</guid>
-      <description>Gibbs Sampling Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined as $p(\theta|data)$.</description>
+      <description>library(reticulate) ## Warning: package &amp;#39;reticulate&amp;#39; was built under R version 3.</description>
     </item>
     
     <item>

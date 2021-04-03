@@ -6,7 +6,7 @@
 if (file.exists("~/.Rprofile")) {
   base::sys.source("~/.Rprofile", envir = environment())
 }
-
+Sys.setenv(RETICULATE_PYTHON="/usr/local/bin/python3")
 # Now set options to customize the behavior of blogdown for this project. Below
 # are a few sample options; for more options, see
 # https://bookdown.org/yihui/blogdown/global-options.html
