@@ -2,38 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://blazickjp.github.io/</loc>
-    <lastmod>2021-04-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/post/2021-04-03-dirichlet-process/</loc>
-    <lastmod>2021-04-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/post/</loc>
-    <lastmod>2021-04-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/categories/</loc>
-    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/post/2020-12-01-r-rmarkdown/</loc>
-    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/tags/plot/</loc>
-    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/categories/r/</loc>
-    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/tags/r-markdown/</loc>
-    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/tags/regression/</loc>
-    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/tags/</loc>
-    <lastmod>2020-12-01T21:13:14-05:00</lastmod>
-  </url><url>
     <loc>http://blazickjp.github.io/archives/</loc>
     <lastmod>2019-05-28T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://blazickjp.github.io/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://blazickjp.github.io/categories/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://blazickjp.github.io/tags/css/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
@@ -47,7 +23,13 @@
     <loc>http://blazickjp.github.io/post/markdown-syntax/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>http://blazickjp.github.io/post/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>http://blazickjp.github.io/categories/syntax/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://blazickjp.github.io/tags/</loc>
     <lastmod>2019-03-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://blazickjp.github.io/categories/themes/</loc>

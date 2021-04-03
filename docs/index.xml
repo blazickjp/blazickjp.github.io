@@ -6,25 +6,7 @@
     <description>Recent content on Website of Joseph Blazick</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 03 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Dirichlet Process</title>
-      <link>http://blazickjp.github.io/post/2021-04-03-dirichlet-process/</link>
-      <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/2021-04-03-dirichlet-process/</guid>
-      <description>Extending to Infinite Components After working with mixture models, it’s natural to wonder how one should best determine the correct number of components to include in our models.</description>
-    </item>
-    
-    <item>
-      <title>Hello R Markdown</title>
-      <link>http://blazickjp.github.io/post/2020-12-01-r-rmarkdown/</link>
-      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/2020-12-01-r-rmarkdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents.</description>
-    </item>
-    
+    <lastBuildDate>Mon, 11 Mar 2019 00:00:00 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title></title>
       <link>http://blazickjp.github.io/archives/</link>
