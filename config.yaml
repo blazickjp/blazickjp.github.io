@@ -1,8 +1,8 @@
 baseurl: http://blazickjp.github.io/
-publishDir: docs/
+publishDir: docs
 languageCode: en-us
 title: A Hugo website
-theme: hugo-lithium
+theme: "anatole"
 googleAnalytics: ''
 disqusShortname: ''
 ignoreFiles:
