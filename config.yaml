@@ -13,7 +13,7 @@ pygmentsCodefencesGuessSyntax: yes
 params:
   author: Joseph Blazick
   customCss: []
-  customJs: []
+  customJs: ["js/psuedocode.js"]
   description: Call me Joe
   doNotLoadAnimations: no
   favicon: favicons/
