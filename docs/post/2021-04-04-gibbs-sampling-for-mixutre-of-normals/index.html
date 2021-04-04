@@ -291,18 +291,18 @@ from <span class="math inline">\(\phi_{\theta_2}(x)\)</span> where <span class="
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Plot of Data </span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span></code></pre></div>
-<pre><code>## (array([0.00609786, 0.02134252, 0.06097863, 0.13110405, 0.12805511,
-##        0.15854443, 0.07927221, 0.02439145, 0.01524466, 0.01829359,
-##        0.01524466, 0.04573397, 0.06707649, 0.05488076, 0.09451687,
-##        0.08537008, 0.08841901, 0.06707649, 0.07317435, 0.06402756,
-##        0.07012542, 0.05488076, 0.03048931, 0.01524466, 0.02439145,
-##        0.01829359, 0.00609786, 0.        , 0.00304893, 0.00304893]), array([-3.09556886, -2.43960131, -1.78363375, -1.1276662 , -0.47169864,
-##         0.18426891,  0.84023646,  1.49620402,  2.15217157,  2.80813913,
-##         3.46410668,  4.12007424,  4.77604179,  5.43200935,  6.0879769 ,
-##         6.74394445,  7.39991201,  8.05587956,  8.71184712,  9.36781467,
-##        10.02378223, 10.67974978, 11.33571734, 11.99168489, 12.64765244,
-##        13.30362   , 13.95958755, 14.61555511, 15.27152266, 15.92749022,
-##        16.58345777]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
+<pre><code>## (array([0.00600837, 0.03004184, 0.04205858, 0.12016738, 0.15621759,
+##        0.14420085, 0.07210043, 0.04806695, 0.02102929, 0.03605021,
+##        0.02703766, 0.0390544 , 0.06308787, 0.0570795 , 0.06308787,
+##        0.06308787, 0.06008369, 0.09312972, 0.08111298, 0.06308787,
+##        0.05107113, 0.04806695, 0.04806695, 0.02102929, 0.01502092,
+##        0.00600837, 0.01201674, 0.00901255, 0.        , 0.00600837]), array([-3.02297143, -2.35723333, -1.69149523, -1.02575713, -0.36001904,
+##         0.30571906,  0.97145716,  1.63719526,  2.30293336,  2.96867146,
+##         3.63440955,  4.30014765,  4.96588575,  5.63162385,  6.29736195,
+##         6.96310004,  7.62883814,  8.29457624,  8.96031434,  9.62605244,
+##        10.29179053, 10.95752863, 11.62326673, 12.28900483, 12.95474293,
+##        13.62048102, 14.28621912, 14.95195722, 15.61769532, 16.28343342,
+##        16.94917151]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Mixture of 2 Gaussians Data&quot;</span>)</span>
@@ -478,18 +478,18 @@ p(z|\theta,x) &amp; = \frac{p(\theta,x,z)}{p(\theta,x)} \\
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>pi <span class="op">=</span> np.<span class="bu">round</span>(np.mean(trace[:,<span class="dv">4</span>]),<span class="dv">2</span>)</span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span></code></pre></div>
-<pre><code>## (array([0.00609786, 0.02134252, 0.06097863, 0.13110405, 0.12805511,
-##        0.15854443, 0.07927221, 0.02439145, 0.01524466, 0.01829359,
-##        0.01524466, 0.04573397, 0.06707649, 0.05488076, 0.09451687,
-##        0.08537008, 0.08841901, 0.06707649, 0.07317435, 0.06402756,
-##        0.07012542, 0.05488076, 0.03048931, 0.01524466, 0.02439145,
-##        0.01829359, 0.00609786, 0.        , 0.00304893, 0.00304893]), array([-3.09556886, -2.43960131, -1.78363375, -1.1276662 , -0.47169864,
-##         0.18426891,  0.84023646,  1.49620402,  2.15217157,  2.80813913,
-##         3.46410668,  4.12007424,  4.77604179,  5.43200935,  6.0879769 ,
-##         6.74394445,  7.39991201,  8.05587956,  8.71184712,  9.36781467,
-##        10.02378223, 10.67974978, 11.33571734, 11.99168489, 12.64765244,
-##        13.30362   , 13.95958755, 14.61555511, 15.27152266, 15.92749022,
-##        16.58345777]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
+<pre><code>## (array([0.00600837, 0.03004184, 0.04205858, 0.12016738, 0.15621759,
+##        0.14420085, 0.07210043, 0.04806695, 0.02102929, 0.03605021,
+##        0.02703766, 0.0390544 , 0.06308787, 0.0570795 , 0.06308787,
+##        0.06308787, 0.06008369, 0.09312972, 0.08111298, 0.06308787,
+##        0.05107113, 0.04806695, 0.04806695, 0.02102929, 0.01502092,
+##        0.00600837, 0.01201674, 0.00901255, 0.        , 0.00600837]), array([-3.02297143, -2.35723333, -1.69149523, -1.02575713, -0.36001904,
+##         0.30571906,  0.97145716,  1.63719526,  2.30293336,  2.96867146,
+##         3.63440955,  4.30014765,  4.96588575,  5.63162385,  6.29736195,
+##         6.96310004,  7.62883814,  8.29457624,  8.96031434,  9.62605244,
+##        10.29179053, 10.95752863, 11.62326673, 12.28900483, 12.95474293,
+##        13.62048102, 14.28621912, 14.95195722, 15.61769532, 16.28343342,
+##        16.94917151]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>, label<span class="op">=</span><span class="st">&quot;Actual&quot;</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu1, sigma1).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>, label<span class="op">=</span><span class="st">&quot;Fitted&quot;</span>)</span>
