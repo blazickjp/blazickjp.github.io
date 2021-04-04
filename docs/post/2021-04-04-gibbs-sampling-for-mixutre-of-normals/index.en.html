@@ -69,29 +69,34 @@ code span.wa { color: #bf0303; } /* Warning */
 </style>
 
 
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js"
+        integrity="sha256-F/Xda58SPdcUCr+xhSGz9MA2zQBPb0ASEYKohl8UCHc=" crossorigin="anonymous">
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css">
+<script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js">
+</script>
+</head>
 <div id="gibbs-sampling" class="section level2">
 <h2>Gibbs Sampling</h2>
 <p>Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined
 as <span class="math inline">\(p(\theta|data)\)</span>. The idea behind the Gibbs Sampler is to sweep through each one of the parameters and sample from their conditional distributions, fixing the other parameters constant. For example, consider the random variables <span class="math inline">\(X_1, X_2, X_3\)</span> and assume that I can write out the analytic form of <span class="math inline">\(p(X_1|X_2,X_3), p(X_2|X_1,X_3), p(X_3|X_2,X_1)\)</span> . We start by initializing <span class="math inline">\(x_{1,t}, x_{2,t}, x_{3,t}\)</span> and for each iteration <span class="math inline">\(t\)</span> we sample <span class="math inline">\(p(X_{1,t+1}|X_{2,t},X_{3,t})\)</span>, <span class="math inline">\(p(X_{2,t+1}|X_{1,t+1},X_{3,t})\)</span>, and <span class="math inline">\(p(X_{3,t+1}|X_{2,t+1},X_{3,t+1})\)</span>. This process can then continue until convergence. Algorithm 1 details a general Gibbs Sampler.</p>
-<span class="math display">\[
-\begin{algorithm}[H]
-\SetAlgoLined
-\KwResult{Write here the result }
- initialization\;
- \While{While condition}{
-  instructions\;
-  \eIf{condition}{
-   instructions1\;
-   instructions2\;
-   }{
-   instructions3\;
-  }
- }
- \caption{How to write algorithms}
-\end{algorithm}
-\]</span>
-$$
-<p>$$</p>
+<pre id="gibbs" style="display:hidden;">
+    \begin{algorithm}
+    \caption{Gibbs Sampling}
+    \begin{algorithmic}
+    \STATE initialize $x_0 \sim q(x)$
+        \FOR{$i = 1, 2, ...$} 
+            \STATE $x_{1,i} \sim p(X_1 = x_1 | X_2 = x_{2,i-1}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$
+            \STATE $x_{2,i} \sim p(X_2 = x_2 | X_1 = x_{1,i}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$
+            \STATE $x_{3,i} \sim p(X_3 = x_3 | X_1 = x_{1,i}, X_2 = x_{2,i}, ..., X_k = x_{k,i-1})$
+        \ENDFOR
+    \end{algorithmic}
+    \end{algorithm}
+</pre>
+<script>
+    pseudocode.renderElement(document.getElementById("gibbs"));
+</script>
 </div>
 <div id="mixture-of-normals" class="section level2">
 <h2>Mixture of Normals</h2>
@@ -127,18 +132,19 @@ from <span class="math inline">\(\phi_{\theta_2}(x)\)</span> where <span class="
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Plot of Data </span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span></code></pre></div>
-<pre><code>## (array([0.03204633, 0.0672973 , 0.12177607, 0.17305021, 0.12818534,
-##        0.08972974, 0.0384556 , 0.0288417 , 0.01602317, 0.0288417 ,
-##        0.0480695 , 0.07050194, 0.0576834 , 0.05127414, 0.0769112 ,
-##        0.08332047, 0.0769112 , 0.08972974, 0.06088804, 0.0672973 ,
-##        0.06088804, 0.03525097, 0.04166023, 0.02563707, 0.01281853,
-##        0.00640927, 0.00640927, 0.00320463, 0.        , 0.00320463]), array([-2.20215092, -1.57805458, -0.95395824, -0.3298619 ,  0.29423444,
-##         0.91833078,  1.54242712,  2.16652346,  2.79061979,  3.41471613,
-##         4.03881247,  4.66290881,  5.28700515,  5.91110149,  6.53519783,
-##         7.15929417,  7.78339051,  8.40748685,  9.03158319,  9.65567953,
-##        10.27977587, 10.90387221, 11.52796855, 12.15206489, 12.77616123,
-##        13.40025757, 14.02435391, 14.64845025, 15.27254659, 15.89664293,
-##        16.52073927]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
+<pre><code>## (array([0.03085908, 0.05863225, 0.08331951, 0.1573813 , 0.16663902,
+##        0.1172645 , 0.04937453, 0.02160136, 0.00925772, 0.01234363,
+##        0.03703089, 0.08331951, 0.0771477 , 0.0401168 , 0.06788997,
+##        0.06480407, 0.04937453, 0.08949133, 0.06480407, 0.06480407,
+##        0.0401168 , 0.05554634, 0.03394499, 0.01542954, 0.03085908,
+##        0.00308591, 0.01234363, 0.00308591, 0.        , 0.00308591]), array([-2.58806699e+00, -1.93995950e+00, -1.29185201e+00, -6.43744519e-01,
+##         4.36297185e-03,  6.52470463e-01,  1.30057795e+00,  1.94868544e+00,
+##         2.59679294e+00,  3.24490043e+00,  3.89300792e+00,  4.54111541e+00,
+##         5.18922290e+00,  5.83733039e+00,  6.48543788e+00,  7.13354537e+00,
+##         7.78165286e+00,  8.42976035e+00,  9.07786784e+00,  9.72597534e+00,
+##         1.03740828e+01,  1.10221903e+01,  1.16702978e+01,  1.23184053e+01,
+##         1.29665128e+01,  1.36146203e+01,  1.42627278e+01,  1.49108353e+01,
+##         1.55589428e+01,  1.62070502e+01,  1.68551577e+01]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Mixture of 2 Gaussians Data&quot;</span>)</span>
@@ -314,18 +320,19 @@ p(z|\theta,x) &amp; = \frac{p(\theta,x,z)}{p(\theta,x)} \\
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>pi <span class="op">=</span> np.<span class="bu">round</span>(np.mean(trace[:,<span class="dv">4</span>]),<span class="dv">2</span>)</span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span></code></pre></div>
-<pre><code>## (array([0.03204633, 0.0672973 , 0.12177607, 0.17305021, 0.12818534,
-##        0.08972974, 0.0384556 , 0.0288417 , 0.01602317, 0.0288417 ,
-##        0.0480695 , 0.07050194, 0.0576834 , 0.05127414, 0.0769112 ,
-##        0.08332047, 0.0769112 , 0.08972974, 0.06088804, 0.0672973 ,
-##        0.06088804, 0.03525097, 0.04166023, 0.02563707, 0.01281853,
-##        0.00640927, 0.00640927, 0.00320463, 0.        , 0.00320463]), array([-2.20215092, -1.57805458, -0.95395824, -0.3298619 ,  0.29423444,
-##         0.91833078,  1.54242712,  2.16652346,  2.79061979,  3.41471613,
-##         4.03881247,  4.66290881,  5.28700515,  5.91110149,  6.53519783,
-##         7.15929417,  7.78339051,  8.40748685,  9.03158319,  9.65567953,
-##        10.27977587, 10.90387221, 11.52796855, 12.15206489, 12.77616123,
-##        13.40025757, 14.02435391, 14.64845025, 15.27254659, 15.89664293,
-##        16.52073927]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
+<pre><code>## (array([0.03085908, 0.05863225, 0.08331951, 0.1573813 , 0.16663902,
+##        0.1172645 , 0.04937453, 0.02160136, 0.00925772, 0.01234363,
+##        0.03703089, 0.08331951, 0.0771477 , 0.0401168 , 0.06788997,
+##        0.06480407, 0.04937453, 0.08949133, 0.06480407, 0.06480407,
+##        0.0401168 , 0.05554634, 0.03394499, 0.01542954, 0.03085908,
+##        0.00308591, 0.01234363, 0.00308591, 0.        , 0.00308591]), array([-2.58806699e+00, -1.93995950e+00, -1.29185201e+00, -6.43744519e-01,
+##         4.36297185e-03,  6.52470463e-01,  1.30057795e+00,  1.94868544e+00,
+##         2.59679294e+00,  3.24490043e+00,  3.89300792e+00,  4.54111541e+00,
+##         5.18922290e+00,  5.83733039e+00,  6.48543788e+00,  7.13354537e+00,
+##         7.78165286e+00,  8.42976035e+00,  9.07786784e+00,  9.72597534e+00,
+##         1.03740828e+01,  1.10221903e+01,  1.16702978e+01,  1.23184053e+01,
+##         1.29665128e+01,  1.36146203e+01,  1.42627278e+01,  1.49108353e+01,
+##         1.55589428e+01,  1.62070502e+01,  1.68551577e+01]), &lt;BarContainer object of 30 artists&gt;)</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>, label<span class="op">=</span><span class="st">&quot;Actual&quot;</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu1, sigma1).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>, label<span class="op">=</span><span class="st">&quot;Fitted&quot;</span>)</span>
