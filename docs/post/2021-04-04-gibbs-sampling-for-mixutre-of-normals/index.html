@@ -297,7 +297,7 @@ from <span class="math inline">\(\phi_{\theta_2}(x)\)</span> where <span class="
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;gauss_mixtures.png&quot;</span>)</span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.close()</span></code></pre></div>
-<p><img src="gauss_mixtures.png" width="350" style="display: block; margin: auto;" /></p>
+<p><img src="gauss_mixtures.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 <p>It can be very difficult to calculate the posterior under conjugate priors for a normal mixture model, so instead we can use a <span class="math inline">\({0,1}\)</span> indicator variable <span class="math inline">\(Z\)</span> to make the calculations easier.</p>
 <p>If we let <span class="math inline">\(\theta_j = \\{\mu_j,\sigma^2_j,\pi\\}\)</span> we see that the joint
 density <span class="math display">\[p(x, z; \theta) = p(x|z;\theta) p(z;\theta)\]</span>
@@ -474,7 +474,7 @@ p(z|\theta,x) &amp; = \frac{p(\theta,x,z)}{p(\theta,x)} \\
 <span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="st">&quot;upper right&quot;</span>)</span>
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;mixture_fitted.png&quot;</span>)</span></code></pre></div>
-<p><img src="mixture_fitted.png" width="350" style="display: block; margin: auto;" /></p>
+<p><img src="mixture_fitted.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 <p>And one of the largest benefits of fitting the parameters using bayesian methods is that we can plot the full posterior distributions over <span class="math inline">\(\theta\)</span>, giving us uncertainty in our fit as well as our point estimates. The full posteriors can be plotted as follows:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">5</span>,<span class="dv">2</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">range</span>(trace.shape[<span class="dv">0</span>])</span>
@@ -493,7 +493,7 @@ p(z|\theta,x) &amp; = \frac{p(\theta,x,z)}{p(\theta,x)} \\
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>fig.set_figwidth(<span class="dv">15</span>)</span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>fig.subplots_adjust(hspace<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">&quot;m2g_trace.png&quot;</span>)</span></code></pre></div>
-<p><img src="m2g_trace.png" width="750" style="display: block; margin: auto;" /></p>
+<p><img src="m2g_trace.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 </div>
 </div>
         <div class="post-footer">

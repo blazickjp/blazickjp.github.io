@@ -90,7 +90,7 @@ plt.savefig("gauss_mixtures.png")
 plt.close()
 ```
 
-```{r, echo=FALSE, fig.align='center'}
+```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
 knitr::include_graphics("gauss_mixtures.png")
 ```
 
@@ -313,7 +313,7 @@ plt.grid()
 plt.savefig("mixture_fitted.png")
 ```
 
-```{r, echo=FALSE, fig.align='center', fig.width=10}
+```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
 knitr::include_graphics("mixture_fitted.png")
 ```
 
@@ -340,6 +340,6 @@ fig.subplots_adjust(hspace=1)
 fig.savefig("m2g_trace.png")
 ```
 
-```{r, echo=FALSE, fig.align='center'}
+```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
 knitr::include_graphics("m2g_trace.png")
 ```
