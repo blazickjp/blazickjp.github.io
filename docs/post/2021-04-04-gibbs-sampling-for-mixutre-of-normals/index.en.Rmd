@@ -81,7 +81,7 @@ y = data_gen(mu=mu, sigmas=sigmas, phi=phi, n=n)
 x = np.linspace(-3,14)
 
 # Create Plot of Data 
-plt.hist(y, 30, density=True, alpha=0.5)
+plt.hist(y, 30, density=True, alpha=0.5);
 plt.plot(x, norm(mu[0], sigmas[0]).pdf(x), color="red")
 plt.plot(x, norm(mu[1], sigmas[1]).pdf(x), color="blue")
 plt.title("Mixture of 2 Gaussians Data")
@@ -302,7 +302,7 @@ sigma1 = np.round(np.mean(trace[:,2]),2)
 sigma2 = np.round(np.mean(trace[:,3]),2)
 pi = np.round(np.mean(trace[:,4]),2)
 
-plt.hist(y, 30, density=True, alpha=0.5)
+plt.hist(y, 30, density=True, alpha=0.5);
 plt.plot(x, norm(mu[0], sigmas[0]).pdf(x), color="red", label="Actual")
 plt.plot(x, norm(mu[1], sigmas[1]).pdf(x), color="red")
 plt.plot(x, norm(mu1, sigma1).pdf(x), color="blue", label="Fitted")
