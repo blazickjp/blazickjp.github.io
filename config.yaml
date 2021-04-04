@@ -13,7 +13,7 @@ pygmentsCodefencesGuessSyntax: yes
 params:
   author: Joseph Blazick
   customCss: []
-  customJs: ["js/psuedocode.js"]
+  customJs: []
   description: Call me Joe
   doNotLoadAnimations: no
   favicon: favicons/
@@ -22,7 +22,6 @@ params:
   mainSections: post
   math:
     enable: yes
-    use: "mathjax"
   profilePicture: images/joe2.jpg
   simpleAnalytics: {}
   socialIcons:
