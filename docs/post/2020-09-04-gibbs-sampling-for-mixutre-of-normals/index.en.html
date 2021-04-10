@@ -1,0 +1,338 @@
+<script src="index.en_files/header-attrs-2.7/header-attrs.js"></script>
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+</style>
+
+
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js"
+        integrity="sha256-F/Xda58SPdcUCr+xhSGz9MA2zQBPb0ASEYKohl8UCHc=" crossorigin="anonymous">
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css">
+<script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js">
+</script>
+</head>
+<div id="gibbs-sampling" class="section level2">
+<h2>Gibbs Sampling</h2>
+<p>Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined
+as <span class="math inline">\(p(\theta|data)\)</span>. The idea behind the Gibbs Sampler is to sweep through each one of the parameters and sample from their conditional distributions, fixing the other parameters constant. For example, consider the random variables <span class="math inline">\(X_1, X_2, X_3\)</span> and assume that I can write out the analytic form of <span class="math inline">\(p(X_1|X_2,X_3), p(X_2|X_1,X_3), p(X_3|X_2,X_1)\)</span> . We start by initializing <span class="math inline">\(x_{1,t}, x_{2,t}, x_{3,t}\)</span> and for each iteration <span class="math inline">\(t\)</span> we sample <span class="math inline">\(p(X_{1,t+1}|X_{2,t},X_{3,t})\)</span>, <span class="math inline">\(p(X_{2,t+1}|X_{1,t+1},X_{3,t})\)</span>, and <span class="math inline">\(p(X_{3,t+1}|X_{2,t+1},X_{3,t+1})\)</span>. This process can then continue until convergence. Algorithm 1 details a general Gibbs Sampler.</p>
+<pre id="gibbs" style="display:hidden;">
+    \begin{algorithm}
+    \caption{Gibbs Sampling}
+    \begin{algorithmic}
+    \STATE initialize $x_0 \sim q(x)$
+        \FOR{$i = 1, 2, ...$} 
+            \STATE $x_{1,i} \sim p(X_1 = x_1 | X_2 = x_{2,i-1}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$
+            \STATE $x_{2,i} \sim p(X_2 = x_2 | X_1 = x_{1,i}, X_3 = x_{3,i-1}, ..., X_k = x_{k,i-1})$
+            \STATE $x_{3,i} \sim p(X_3 = x_3 | X_1 = x_{1,i}, X_2 = x_{2,i}, ..., X_k = x_{k,i-1})$
+        \ENDFOR
+    \end{algorithmic}
+    \end{algorithm}
+</pre>
+<script>
+    pseudocode.renderElement(document.getElementById("gibbs"));
+</script>
+</div>
+<div id="mixture-of-normals" class="section level2">
+<h2>Mixture of Normals</h2>
+<p>Now that we understand the ideas behind Gibbs Sampling, let’s determine how we can use it to fit a mixture of 2 univariate gaussians. Our model is defined by <span class="math inline">\(p(x|\theta) = \pi\phi_{\theta_i}(x) + (1-\pi)\phi_{\theta_2}(x)\)</span>. This just means that we have some probability <span class="math inline">\(\pi\)</span> of taking our observation from <span class="math inline">\(\phi_{\theta_1}(x)\)</span> where <span class="math display">\[\phi_{\theta_1}(x) \sim N(\mu_1, \sigma^2_1)\]</span> and <span class="math inline">\((1-\pi)\)</span> probability of coming
+from <span class="math inline">\(\phi_{\theta_2}(x)\)</span> where <span class="math inline">\(\phi_{\theta_2}(x) \sim N(\mu_2, \sigma^2_2)\)</span>. Using python we can show this as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy.random <span class="im">import</span> binomial, normal, beta, multinomial</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.stats <span class="im">as</span> st</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> invgamma, norm</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> distcan <span class="im">import</span> InverseGamma</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> data_gen(mu, sigmas, phi, n):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Generates samples from Mixture of 2 Gaussian Distributions</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> []</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        ind <span class="op">=</span> binomial(<span class="dv">1</span>, phi, <span class="dv">1</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ind <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            y.append(norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).rvs())</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            y.append(norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).rvs())</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(y)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Set Starting Parameters</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">8</span>]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>sigmas <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">3</span>]</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fl">.4</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">500</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> data_gen(mu<span class="op">=</span>mu, sigmas<span class="op">=</span>sigmas, phi<span class="op">=</span>phi, n<span class="op">=</span>n)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">3</span>,<span class="dv">14</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Plot of Data </span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)<span class="op">;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Mixture of 2 Gaussians Data&quot;</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;gauss_mixtures.png&quot;</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.close()</span></code></pre></div>
+<p><img src="gauss_mixtures.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+<p>It can be very difficult to calculate the posterior under conjugate priors for a normal mixture model, so instead we can use a <span class="math inline">\({0,1}\)</span> indicator variable <span class="math inline">\(Z\)</span> to make the calculations easier.</p>
+<p>If we let <span class="math inline">\(\theta_j = \\{\mu_j,\sigma^2_j,\pi\\}\)</span> we see that the joint
+density <span class="math display">\[p(x, z; \theta) = p(x|z;\theta) p(z;\theta)\]</span>
+where <span class="math display">\[p(x|z;\theta) = \phi_{\theta_1}(x)^{z_1}\phi_{\theta_2}(x)^{z_2}\]</span> and <span class="math inline">\(p(z;\theta)\)</span> comes from the multinomial distribution with density <span class="math inline">\(\frac{n!}{x_1!x_2!}\pi_1^{z_1}\pi^{z_2}\)</span>. Because <span class="math inline">\(z\)</span> is an indicator variable, <span class="math inline">\(\frac{n!}{x_1!x_2!} = 1\)</span> so our second term is given by:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(z;\theta) &amp; = \pi^{z_1}(1-\pi)^{z_2}\\
+p(z;\theta) &amp; = \prod_{j=1}^K\pi_j^{z_j}
+\end{align*}
+\]</span></p>
+<p>Which gives the full data likelihood:</p>
+<p><span class="math display">\[p(x, z; \theta) = \prod_{i=1}^N\left[\pi\phi_{\theta_1}(x_i)\right]^{z_1}\left[(1-\pi)\phi_{\theta_2}(x_i)\right]^{z_2}\]</span></p>
+<p>We can now define our prior distributions. We’ll use conjugate priors because they allow us to easily compute posterior distributions. We should also point out that the choice of prior hyper parameters can make our calculations easier as well. We define our priors over <span class="math inline">\(\{\mu_j,\sigma^2_j,\pi\}\)</span> as follows:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\pi) &amp; \sim Beta(\alpha = 1, \beta = 1)\\
+p(\mu_j) &amp; \sim N(\mu_0 = 0, \tau^2 = 1)\\
+p(\sigma_j^2) &amp; \sim IG(\delta = 1, \psi = 1)
+\end{align*}
+\]</span></p>
+<p>Plugging our hyperparameters directly into our densities we get the following prior distributions:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\pi|\alpha,\beta) &amp; = \pi^{\alpha-1}(1-\pi)^{\beta-1}\\
+&amp; \propto const\\
+p(\mu_j|\mu_0,\tau^2) &amp; = \frac{1}{\sqrt{2\pi}}\exp\left[-\frac{(\mu_j - \mu_0)^2}{2\tau^2}\right]\\
+&amp; \propto \exp\left[-\frac{\mu_j^2}{2}\right]\\
+p(\sigma_j^2|\delta, \psi) &amp; = \left(\sigma^2_j\right)^{-\delta - 1}\exp\left[-\frac{\psi}{\sigma^2_j}\right]\\
+&amp; \propto \left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]
+\end{align*}
+\]</span></p>
+<p>Which leads to the posterior distribution over <span class="math inline">\(\theta\)</span>:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\theta|x,z) &amp; \propto p(x, z| \theta)p(\pi)\prod_{j=1}^k\left[p(\mu_j)p(\sigma_j^2)\right]\\
+&amp; \propto \prod_{i=1}^N\pi^{z_1}\phi_{\theta_1}(x_i)^{z_1}\prod_{i=1}^N(1-\pi)^{z_1}\phi_{\theta_2}(x_i)^{z_2}\prod_{j=1}^k\left[p(\mu_j)p(\sigma_j^2)\right]\\
+&amp; \propto \prod_{i=1}^N\pi^{z_1}\prod_{i=1}^N\pi^{z_2}\prod_{i=1}^N\phi_{\theta_1}(x_i)^{z_1}\prod_{i=1}^N\phi_{\theta_2}(x_i)^{z_2}\prod_{j=1}^K\exp\left[-\frac{\mu_j^2}{2}\right]\left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]\\
+&amp; \propto \pi^{\sum_{i=1}^Nz_1}(1-\pi)^{\sum_{i=1}^Nz_2}\prod_{i=1}^N\prod_{j=1}^K\phi_{\theta_j}(x_i)^{z_j}\prod_{j=1}^K\exp\left[-\frac{\mu_j^2}{2}\right]\left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]\\
+\end{align*}
+\]</span></p>
+<p>Now that we can isolate our variables to solve for the complete conditionals. The easiest to see is the complete conditional for <span class="math inline">\(\pi\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\pi|x, z) &amp; = \int_0^{\infty}\int_0^{\infty}p(\theta|x,z)d\mu d\sigma\\
+&amp; \propto \pi^{\sum_{i=1}^Nz_1 + 1 - 1}(1-\pi)^{\sum_{i=1}^Nz_2 + 1 - 1}\\
+p(\pi|x, z) &amp; \sim Beta\left(\sum_{i=1}^Nz_1 + 1, \sum_{i=1}^Nz_2 + 1\right) 
+\end{align*}
+\]</span></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_pi(N, n):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from Posterior Conditional for pi</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> beta(<span class="dv">1</span><span class="op">+</span>n, <span class="dv">1</span><span class="op">+</span>(N<span class="op">-</span>n))</span></code></pre></div>
+<p>Similarly we can work out the complete conditional for <span class="math inline">\(\mu\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\mu|x, z) &amp; = \int_0^{\infty}\int_0^{\infty}p(\theta|x,z)d\pi d\sigma\\
+&amp; \propto \prod_{n=1}^N\prod_{j=1}^K\phi_{\theta_j}(x_i)^{z_j}\prod_{j=1}^K\exp\left[-\frac{\mu_j^2}
+{2}\right]\\
+\end{align*}
+\]</span></p>
+<p>We can stick with a singular instance of <span class="math inline">\(\mu\)</span> to simplify this a bit and get rid of the product over <span class="math inline">\(K\)</span> because we know that the calculation is going to be the same for all <span class="math inline">\(\mu\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp; \propto \prod_{n=1}^N\phi_{\theta_1}(x_i)^{z_1}\exp\left[-\frac{\mu_1^2}{2}\right]\\
+&amp; \propto \exp\left[-\frac{\sum_{i=1}^Nz_{i1}(x_i - \mu_1)^2}{2\sigma_j^2} - \frac{\mu_1^2}{2}\right]\\
+&amp; \propto \exp\left[-\frac{\sum_{i=1}^Nz_{i1}x_i^2 - 2\mu_1x_iz_{i1} + z_{i1}\mu_1^2}{2\sigma_j^2} - \frac{\mu_1^2}{2}\right]\\
+p(\mu | x, z) &amp; \propto \exp\left[-\frac{\sum_{i=1}^Nz_{i1}x_i^2 - 2\mu_1x_iz_{i1} + z_{i1}\mu_1^2 + \sigma^2_j\mu_j^2}{2\sigma_j^2}\right]
+\end{align*}
+\]</span></p>
+<p>Now let <span class="math inline">\(\sum_{i=1}^Nz_{ij}x_i=\tilde{x_j}\)</span> and <span class="math inline">\(\sum_{i=1}^Nz_{ij}=n_j\)</span>. We can also see that the first
+term <span class="math inline">\(\sum_{i=1}^Nz_{i1}x_i^2\)</span> does not depend on <span class="math inline">\(\mu_j\)</span> so this can be factored out and absorbed into the constant term. We’re going to need to complete the square here to isolate our normal parameters.</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\mu | x, z) &amp; \propto \exp\left[-\frac{2\tilde{x_j}\mu_j + (n_j + \sigma^2_j)\mu_j^2}{2\sigma_j^2}\right]\\
+&amp; \propto \exp\left[-(n_j + \sigma^2_j)\frac{\mu_j^2 + 2\left(\frac{\tilde{x_j}}{n_j + \sigma^2_j}\right)\mu_j - \left(\frac{\tilde{x_j}}{n_j + \sigma^2_j}\right)^2 + \left(\frac{\tilde{x_j}}{n_j + \sigma^2_j}\right)^2}{2\sigma_j^2}\right]\\
+&amp; \propto \exp\left[-(n_j + \sigma^2_j)\frac{\left(\mu_j - \frac{\tilde{x_j}}{n_j + \sigma^2_j}\right)^2}{2\sigma_j^2}\right]\\
+p(\mu | x, z) &amp; \sim N\left(\frac{\tilde{x_j}}{n_j + \sigma^2_j}, \frac{\sigma^2_j}{n_j + \sigma^2_j}\right)
+\end{align*}
+\]</span></p>
+<p>Note that if we use the prior
+<span class="math display">\[p(\mu_j|\mu_0,\tau^2) = N(0, \sigma^2_j)\]</span> we get:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\mu | x, z) \sim N \left(\frac{\tilde{x_j}}{n_j + 1}, \frac{\sigma^2_j}{n_j + 1}\right)\\
+\end{align*}
+\]</span></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_mu(y, sigma):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from Posterior Conditional for mu</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">len</span>(y)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> normal(y.<span class="bu">sum</span>() <span class="op">/</span> (n <span class="op">+</span> <span class="dv">1</span>), np.sqrt(sigma <span class="op">/</span> (n <span class="op">+</span> <span class="dv">1</span>)))</span></code></pre></div>
+<p>Moving on to <span class="math inline">\(\sigma^2\)</span>:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\mu|x, z) &amp; = \int_0^{\infty}\int_0^{\infty}p(\theta|x,z)d\pi d\mu\\
+&amp; \propto \prod_{n=1}^N\prod_{j=1}^K\phi_{\theta_j}(x_i)^{z_j}\prod_{j=1}^K \left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]
+\end{align*}
+\]</span></p>
+<p>Again we can isolate to <span class="math inline">\(j=1\)</span> knowing that it’s the same for all <span class="math inline">\(j\)</span>:</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp; \propto \prod_{n=1}^N\phi_{\theta_j}(x_i)^{z_j}\left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]\\
+&amp; \propto \left(\sigma^2_j\right)^{-\frac{\left(\sum_{i=1}^Nz_{i,j}\right) -2 -2}{2}}\exp\left[-\frac{1}{\sigma^2_j}- \frac{\sum_{i=1}^N(x-\mu_j)^2}{2\sigma^2_j}\right]\\
+&amp; \propto \left(\sigma^2_j\right)^{-\left(\frac{1}{2}n_j + 1\right) - 1}\exp\left[\frac{1 + \frac{1}{2}\sum_{i=1}^N(x-\mu_j)^2}{\sigma^2_j}\right]\\
+&amp; \sim IG\left(\frac{1}{2}n_j + 1, 1 + \frac{1}{2}\sum_{i=1}^N(x-\mu_j)^2\right)
+\end{align*}
+\]</span></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_sigma(y, mu):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from Posterior Conditional for sigma</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> (<span class="fl">0.5</span> <span class="op">*</span> <span class="bu">len</span>(y)) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> (<span class="fl">0.5</span> <span class="op">*</span> np.square(y <span class="op">-</span> mu).<span class="bu">sum</span>()) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> InverseGamma(alpha, beta).rvs()</span></code></pre></div>
+<p>Next we get the updates for each <span class="math inline">\(z_{i,j}\)</span> simply using the rules of conditional probabilities:</p>
+<p><span class="math display">\[ 
+\begin{align*} 
+p(z|\theta,x) &amp; = \frac{p(\theta,x,z)}{p(\theta,x)} \\ 
+&amp; =  \frac{p(x|z,\theta)p(z|\theta)p(\theta)}{p(x|\theta)p(\theta)}  \\ 
+&amp; =  \frac{p(x|z,\theta)p(z|\theta)}{p(x|\theta)}  \\ 
+&amp; = \frac{\pi_j\phi_{\theta_1}(x_i)}{\sum_{j=1}^K\pi_j\phi_{\theta_j}(x_i)}
+\end{align*} 
+\]</span></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_z(data: <span class="bu">list</span>, mu, sigma, pi):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from latent variable Z according to likelihoods for class assignment</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> norm(mu[<span class="dv">0</span>], np.sqrt(sigma[<span class="dv">0</span>])).pdf(data) <span class="op">*</span> pi</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> norm(mu[<span class="dv">1</span>], np.sqrt(sigma[<span class="dv">1</span>])).pdf(data) <span class="op">*</span> pi</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    pi_i <span class="op">=</span> a <span class="op">/</span> (a <span class="op">+</span> b)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> binomial(<span class="dv">1</span>, pi_i)</span></code></pre></div>
+<p>Finally, lets define our Gibbs Algorithm to fit our parameters to the data we generated earlier. Then we can extract our fitted params and see how well we fit the data.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gibbs(data, iters, burnin):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Run Gibb&#39;s Sampling for Mixture of 2 Gaussians. Initial States are sample from Priors</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set initial guesses based on priors</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> normal(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    pi <span class="op">=</span> beta(<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> InverseGamma(<span class="dv">1</span>,<span class="dv">1</span>).rvs(size<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> np.empty((iters, <span class="dv">5</span>))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(iters):</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Update Parameters according to conditional posterior distributions</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        z1 <span class="op">=</span> update_z(data, mu, sigma, pi)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        pi <span class="op">=</span> update_pi(<span class="bu">len</span>(data), <span class="bu">len</span>(data[z1<span class="op">==</span><span class="dv">1</span>]))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        mu[<span class="dv">0</span>] <span class="op">=</span> update_mu(data[z1 <span class="op">==</span> <span class="dv">1</span>], sigma[<span class="dv">0</span>])</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        mu[<span class="dv">1</span>] <span class="op">=</span> update_mu(data[z1 <span class="op">==</span> <span class="dv">0</span>], sigma[<span class="dv">1</span>])</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        sigma[<span class="dv">0</span>] <span class="op">=</span> update_sigma(data[z1 <span class="op">==</span> <span class="dv">1</span>], mu[<span class="dv">0</span>])</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        sigma[<span class="dv">1</span>] <span class="op">=</span> update_sigma(data[z1 <span class="op">==</span> <span class="dv">0</span>], mu[<span class="dv">1</span>])</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Store Values to monitor trace</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        out[i, <span class="dv">0</span>:<span class="dv">2</span>] <span class="op">=</span> mu</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        out[i, <span class="dv">2</span>:<span class="dv">4</span>] <span class="op">=</span> np.sqrt(sigma)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        out[i, <span class="dv">4</span>] <span class="op">=</span> pi</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out[burnin:,:]</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>trace <span class="op">=</span> gibbs(y, <span class="dv">2000</span>, <span class="dv">500</span>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>mu1 <span class="op">=</span> np.<span class="bu">round</span>(np.mean(trace[:,<span class="dv">0</span>]),<span class="dv">2</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>mu2 <span class="op">=</span> np.<span class="bu">round</span>(np.mean(trace[:,<span class="dv">1</span>]),<span class="dv">2</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>sigma1 <span class="op">=</span> np.<span class="bu">round</span>(np.mean(trace[:,<span class="dv">2</span>]),<span class="dv">2</span>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>sigma2 <span class="op">=</span> np.<span class="bu">round</span>(np.mean(trace[:,<span class="dv">3</span>]),<span class="dv">2</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>pi <span class="op">=</span> np.<span class="bu">round</span>(np.mean(trace[:,<span class="dv">4</span>]),<span class="dv">2</span>)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)<span class="op">;</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>, label<span class="op">=</span><span class="st">&quot;Actual&quot;</span>)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu1, sigma1).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>, label<span class="op">=</span><span class="st">&quot;Fitted&quot;</span>)</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu2, sigma2).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Mixture of 2 Gaussians Data&quot;</span>)</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="st">&quot;upper right&quot;</span>)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;mixture_fitted.png&quot;</span>)</span></code></pre></div>
+<p><img src="mixture_fitted.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+<p>And one of the largest benefits of fitting the parameters using bayesian methods is that we can plot the full posterior distributions over <span class="math inline">\(\theta\)</span>, giving us uncertainty in our fit as well as our point estimates. The full posteriors can be plotted as follows:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">5</span>,<span class="dv">2</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">range</span>(trace.shape[<span class="dv">0</span>])</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> [<span class="st">&quot;mu 1&quot;</span>, <span class="st">&quot;mu 2&quot;</span>, <span class="st">&quot;sigma 1&quot;</span>, <span class="st">&quot;sigma 2&quot;</span>, <span class="st">&quot;Phi&quot;</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, v <span class="kw">in</span> <span class="bu">enumerate</span>(params):</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> trace[:,i]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">0</span>].plot(x, y)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">0</span>].set_title(v)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">1</span>].hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">1</span>].set_title(v)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">0</span>].grid()</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">1</span>].grid()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">&quot;Trace of Parameters&quot;</span>, fontsize<span class="op">=</span><span class="dv">25</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>fig.set_figheight(<span class="dv">15</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>fig.set_figwidth(<span class="dv">15</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>fig.subplots_adjust(hspace<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">&quot;m2g_trace.png&quot;</span>)</span></code></pre></div>
+<p><img src="m2g_trace.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+</div>

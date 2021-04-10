@@ -17,20 +17,20 @@
     </item>
     
     <item>
-      <title>Hello R Markdown</title>
-      <link>http://blazickjp.github.io/post/2020-12-01-r-rmarkdown/</link>
-      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
+      <title>Extending GMM Gibbs Sampling to K-Components</title>
+      <link>http://blazickjp.github.io/post/2020-10-17-extending-gmm-gibbs-sampling-to-k-components/</link>
+      <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://blazickjp.github.io/post/2020-12-01-r-rmarkdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents.</description>
+      <guid>http://blazickjp.github.io/post/2020-10-17-extending-gmm-gibbs-sampling-to-k-components/</guid>
+      <description>Introduction In my previous post, I derived a Gibbs Sampler for a univariate Gaussian Mixture Model (GMM).</description>
     </item>
     
     <item>
       <title>Gibbs Sampling for Mixutre of Normals</title>
-      <link>http://blazickjp.github.io/post/2021-04-04-gibbs-sampling-for-mixutre-of-normals/</link>
+      <link>http://blazickjp.github.io/post/2020-09-04-gibbs-sampling-for-mixutre-of-normals/</link>
       <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://blazickjp.github.io/post/2021-04-04-gibbs-sampling-for-mixutre-of-normals/</guid>
+      <guid>http://blazickjp.github.io/post/2020-09-04-gibbs-sampling-for-mixutre-of-normals/</guid>
       <description>pre  code.sourceCode { white-space: pre; position: relative; } pre  code.</description>
     </item>
     
@@ -44,66 +44,12 @@
     </item>
     
     <item>
-      <title>Markdown Syntax Guide</title>
-      <link>http://blazickjp.github.io/post/markdown-syntax/</link>
-      <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/markdown-syntax/</guid>
-      <description>&lt;p&gt;This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Rich Content</title>
-      <link>http://blazickjp.github.io/post/rich-content/</link>
-      <pubDate>Sun, 10 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/rich-content/</guid>
-      <description>&lt;p&gt;Hugo ships with several &lt;a href=&#34;https://gohugo.io/content-management/shortcodes/#use-hugos-built-in-shortcodes&#34;&gt;Built-in Shortcodes&lt;/a&gt; for rich content, along with a &lt;a href=&#34;https://gohugo.io/about/hugo-and-gdpr/&#34;&gt;Privacy Config&lt;/a&gt; and a set of Simple Shortcodes that enable static and no-JS versions of various social media embeds.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Placeholder Text</title>
-      <link>http://blazickjp.github.io/post/placeholder-text/</link>
-      <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/placeholder-text/</guid>
-      <description>&lt;p&gt;Lorem est tota propiore conpellat pectoribus de pectora summo.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Contact</title>
       <link>http://blazickjp.github.io/contact/</link>
       <pubDate>Fri, 08 Mar 2019 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/contact/</guid>
       <description></description>
-    </item>
-    
-    <item>
-      <title>Math Typesetting</title>
-      <link>http://blazickjp.github.io/post/math-typesetting/</link>
-      <pubDate>Fri, 08 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/math-typesetting/</guid>
-      <description>&lt;p&gt;Mathematical notation in a Hugo project can be enabled by using third party JavaScript libraries.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Emoji Support</title>
-      <link>http://blazickjp.github.io/post/emoji-support/</link>
-      <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/emoji-support/</guid>
-      <description>&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Guide to Thumbnails in Hugo</title>
-      <link>http://blazickjp.github.io/post/image-test/</link>
-      <pubDate>Mon, 04 Mar 2019 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/image-test/</guid>
-      <description>Thumbnails can be enabled easily by setting the thumbnail parameter in the frontmatter to an image such as &amp;quot;images/landscape.</description>
     </item>
     
     <item>

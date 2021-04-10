@@ -1,0 +1,249 @@
+---
+title: Extending GMM Gibbs Sampling to K-Components
+author: Joseph Blazick
+date: '2020-10-17'
+slug: []
+categories: []
+tags: []
+Description: ''
+Tags: []
+Categories: []
+DisableComments: no
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In my previous post, I derived a Gibbs Sampler for a univariate Gaussian Mixture Model (GMM). In this post I will extend the sampler to handle the K-Component univariate GMM. As a quick reminder, Gibbs Sampling is a MCMC method for sampling from multivariate distributions that may be difficult to sample from directly. The method is commonly used in bayesian inference when sampling the the posterior or joint distribution in question. The samples generated from the Markov chain will converge to the desired distribution when <span class="math inline">\(N\)</span> is large.</p>
+</div>
+<div id="k-component-gmm" class="section level2">
+<h2>K-Component GMM</h2>
+<p>The K-Component GMM can be defined as <span class="math inline">\(p(x|\theta) = \sum_{j=1}^K\pi_j\phi_{\theta_j}(x)\)</span>. This model assumes
+that <span class="math inline">\(K\)</span> is known, so let’s set <span class="math inline">\(K=4\)</span> and generate some data with the following parameters:</p>
+<p><span class="math display">\[
+\begin{align*}
+\pi &amp; = \{.2,.2,.2,.4\}\\
+\mu &amp; = \{0,4,8,16\}\\
+\sigma &amp; = \{1,1,2,3\}
+\end{align*}
+\]</span></p>
+<pre class="python"><code>import numpy as np
+from numpy.random import binomial, normal, beta, multinomial
+import scipy.stats as st
+from scipy.stats import invgamma, norm, dirichlet, multivariate_normal
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from distcan import InverseGamma
+
+def data_gen(mu, sigmas, phi, n):
+    &quot;&quot;&quot;
+    Generates samples from Mixture of K Gaussian Distributions
+    &quot;&quot;&quot;
+    y = []
+    for i in range(n):
+        ind = multinomial(1, phi)
+        for j, val in enumerate(ind):
+            if val == 1:
+                y.append(norm(mu[j], sigmas[j]).rvs())
+            else:
+                next
+    return np.array(y)
+
+# Set Starting Parameters
+mu = [0,4,8,16]
+sigmas = [1,1,2,3]
+phi = [.2,.2,.2,.4]
+n = 2000
+y = data_gen(mu=mu, sigmas=sigmas, phi=phi, n=n)
+x = np.linspace(-3,25)
+
+# Create Plot of Data 
+plt.hist(y, 30, density=True, alpha=0.5);
+plt.plot(x, norm(mu[0], sigmas[0]).pdf(x), color=&quot;red&quot;)
+plt.plot(x, norm(mu[1], sigmas[1]).pdf(x), color=&quot;blue&quot;)
+plt.plot(x, norm(mu[2], sigmas[2]).pdf(x), color=&quot;green&quot;)
+plt.plot(x, norm(mu[3], sigmas[3]).pdf(x), color=&quot;yellow&quot;)
+plt.title(&quot;Mixture of 2 Gaussians Data&quot;)
+plt.grid()
+plt.savefig(&quot;mix2.png&quot;)</code></pre>
+<p><img src="mix2.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="the-dirichlet-distribution" class="section level2">
+<h2>The Dirichlet Distribution</h2>
+<p>Now that we are sampling from more than 2 gaussians, we need a distribution to define over <span class="math inline">\(p(\pi)\)</span> that generalizes to more than 2 groups. Recall that when we were using <span class="math inline">\(K=2\)</span>, we had used the beta distribution. The multivariate generalization of the beta distribution is known as the Dirichlet distribution, often written as <span class="math inline">\(Dir(\pmb{\alpha})\)</span> where <span class="math inline">\(\pmb{\alpha}\)</span> is a vector of positive reals. The full Dirichlet distribution is defined as:</p>
+<p><span class="math display">\[
+p(\pi_1, ..., \pi_k | \pmb{\alpha}) = \frac{\Gamma\left(\sum_{j=1}^K\alpha_j\right)}{\prod_{j=1}^k\Gamma(\alpha_j)}\prod_{j=1}^K\pi_j^{\alpha_j-1}
+\]</span></p>
+<p>We can generate samples from the Dirichlet Distribution with various parameters to better understand how the distribution works. The top left plot shows the case when <span class="math inline">\(\pmb{\alpha}\)</span> is equal for all <span class="math inline">\(k\)</span>, but small. This results in the samples over each group to be pushed more towards 1 or 0. In the extreme, the samples of vector <span class="math inline">\(\pmb{\pi}\)</span> has one group with <span class="math inline">\(\pi_j = 1\)</span> and the rest with <span class="math inline">\(\pi_{\neg j} = 0\)</span>. In the other plots where <span class="math inline">\(\pmb{\alpha}\)</span> is equal across all <span class="math inline">\(k\)</span>, we can see that increasing the magnitude of <span class="math inline">\(\pmb{\alpha}\)</span> reduces the variance in the samples of <span class="math inline">\(\pmb{\pi}\)</span> The last plot demonstrates how varying <span class="math inline">\(\alpha_j\)</span> changes the mean of each <span class="math inline">\(\pi_j\)</span> being sampled based on the proportions of <span class="math inline">\(\alpha_j\)</span> compared to <span class="math inline">\(\alpha_{\neg j}\)</span></p>
+</div>
+<div id="deriving-complete-conditional-of-pi" class="section level2">
+<h2>Deriving Complete Conditional of <span class="math inline">\(\pi\)</span></h2>
+<p>Recall that in my last post, we set our prior
+distribution <span class="math inline">\(p(\pi) \sim Beta(\alpha = 1, \beta = 1)\)</span>. We were using the beta distribution to describe the probability of drawing from one of our Gaussian distributions. Now that we have expanded from <span class="math inline">\(K=2\)</span> to <span class="math inline">\(K=4\)</span>, we simply replace this prior with <span class="math inline">\(p(\pi) \sim Dir(\pmb{\alpha} = \pmb{1})\)</span>. This gives us our full list of priors as follows:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\pmb{\pi}) &amp; \sim Dir(\pmb{\alpha})\\
+p(\mu_j) &amp; \sim N(\mu_0 = 0, \tau^2 = 1)\\
+p(\sigma_j^2) &amp; \sim IG(\delta = 1, \psi = 1)
+\end{align*}
+\]</span></p>
+<p>We’ve already defined the posterior over <span class="math inline">\(\theta\)</span> when <span class="math inline">\(K=2\)</span> and <span class="math inline">\(p(\pi) \sim Beta(1,1)\)</span>. First we can examine the case when <span class="math inline">\(K=2\)</span> and compare the changes to the case when <span class="math inline">\(K\)</span> is larger and the Dirichlet distribution is required. I’ve highlighted the changes in green.</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\theta|x,z) &amp; \propto p(x, z| \theta)p(\pmb{\pi})\prod_{j=1}^k\left[p(\mu_j)p(\sigma_j^2)\right]\\
+&amp; \propto \color{green}{\pi^{\sum_{i=1}^Nz_1}(1-\pi)^{\sum_{i=1}^Nz_2}} \prod_{i=1}^N\prod_{j=1}^K\phi_{\theta_j}(x_i)^{z_j}\prod_{j=1}^K\exp\left[-\frac{\mu_j^2}{2}\right]\left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]\\
+\end{align*}
+\]</span></p>
+<p>Now if we substitute <span class="math inline">\(Dir(\pmb{\alpha})\)</span> for <span class="math inline">\(p(\pi) \sim Beta(1,1)\)</span>, we get:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\theta|x,z) &amp; \propto p(x, z| \theta)p(\pi)\prod_{j=1}^k\left[p(\mu_j)p(\sigma_j^2)\right]\\
+&amp; \propto \color{green}{\frac{\Gamma\left(\sum_{j=1}^K\alpha_j\right)}{\prod_{j=1}^k\Gamma(\alpha_j)}\prod_{j=1}^K\pi_j^{\alpha_j-1}\pi_j^{\sum_{i=1}^Nz_i}}\prod_{i=1}^N\prod_{j=1}^K\phi_{\theta_j}(x_i)^{z_j}\prod_{j=1}^K\exp\left[-\frac{\mu_j^2}{2}\right]\left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]\\
+\end{align*}
+\]</span></p>
+<p>Now that we can isolate our variables to solve for the complete conditional of <span class="math inline">\(\pi\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\pi|x, z, \pmb{\sigma}, \pmb{\mu}) &amp; \propto \prod_{j=1}^K \pi_j^{\alpha_j - 1 + \sum_{i=1}^N z_i}\\
+p(\pi|x, z) &amp; \sim Dir\left(\sum_{i=1}^Nz_1 + \alpha_1, ..., \sum_{i=1}^Nz_k + \alpha_k\right) 
+\end{align*}
+\]</span></p>
+<pre class="python"><code>def update_pi(alpha_vec, z_vec):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for pi
+    &quot;&quot;&quot;
+    assert len(z_vec) == len(alpha_vec), &quot;Number of distributions must equal number of parameters&quot;
+    return dirichlet(z_vec + alpha_vec).rvs()</code></pre>
+</div>
+<div id="complete-conditionals-for-pmbmu-pmbsigma" class="section level2">
+<h2>Complete Conditionals for <span class="math inline">\(\pmb{\mu}\)</span>, <span class="math inline">\(\pmb{\sigma}\)</span></h2>
+<p>The complete conditionals for <span class="math inline">\(\pmb{\mu}\)</span> and <span class="math inline">\(\pmb{\sigma}\)</span> remain the same as the <span class="math inline">\(k=2\)</span> example:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\mu | x, z, \pmb{\sigma}, \pmb{\pi}) \sim N \left(\frac{\tilde{x_j}}{n_j + 1}, \frac{\sigma^2_j}{n_j + 1}\right)\\
+\end{align*}
+\]</span></p>
+<p>Notice that in the code we sample from a multivariate normal with the variances on the diagonal. This is purely to speed up the calculations and equivalent to the statement above.</p>
+<pre class="python"><code>def update_mu(y, z_mat, sigma_vec):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for mu
+    &quot;&quot;&quot;
+    mu_vec = []
+    n_j =  np.sum(z_mat, axis=0)
+    for j in range(len(sigma_vec)):
+        sigma_vec[j] = sigma_vec[j] / (n_j[j] + 1)
+        mu_vec.append(np.sum(y * z_mat[:,j]) / (n_j[j] + 1))
+    
+    cov = np.diag(sigma_vec)
+    return multivariate_normal(mu_vec, cov).rvs()</code></pre>
+<p>Moving on to <span class="math inline">\(\sigma^2\)</span>:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\mu|x, z, \pmb{\sigma}, \pmb{\pi}) &amp; \sim IG\left(\frac{1}{2}n_j + 1, 1 + \frac{1}{2}\sum_{i=1}^N(x-\mu_j)^2\right)
+\end{align*}
+\]</span></p>
+<pre class="python"><code>def update_sigma(data, z_mat, mu):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for sigma
+    &quot;&quot;&quot;
+    n_j = np.sum(z_mat, axis=0)
+    alpha = (0.5 * n_j) + 1
+    beta = []
+    for j in range(len(mu)):
+        y = data * z_mat[:,j]
+        y = y[y != 0]
+        beta.append((0.5 * np.square(y - mu[j]).sum()) + 1)
+    return InverseGamma(alpha, beta).rvs()</code></pre>
+<p>The updates for each <span class="math inline">\(z_{i,j}\)</span> is also still the same:</p>
+<p><span class="math display">\[ 
+\begin{align*} 
+p(z|\theta,x) &amp; = \frac{\pi_j\phi_{\theta_1}(x_i)}{\sum_{j=1}^K\pi_j\phi_{\theta_j}(x_i)}
+\end{align*} 
+\]</span></p>
+<pre class="python"><code>def update_z(data: list, mu, sigma, pi):
+    &quot;&quot;&quot;
+    Sample from latent variable Z according to likelihoods for class assignment
+    &quot;&quot;&quot;
+    a = np.empty((len(data), len(mu)))
+    out = np.empty((len(data), len(mu)))
+    for j in range(len(mu)):
+        a[:,j] = norm(mu[j], np.sqrt(sigma[j])).pdf(data) * pi[0,j]
+    
+    pi_i = a / np.sum(a, axis=1)[:,None]
+    for i in range(len(data)):
+        out[i,] = multinomial(1, pi_i[i,:])
+    return out</code></pre>
+<p>Finally, the Gibbs algorithm is the same with minor code differences to account for the changes in parameters and data structures</p>
+<pre class="python"><code>def gibbs(data, iters, burnin, k):
+    &quot;&quot;&quot;
+    Run Gibb&#39;s Sampling for Mixture of 2 Gaussians. Initial States are sample from Priors
+    &quot;&quot;&quot;
+    # Set initial guesses based on priors
+    alpha = [1,1,1,1]
+    mu = normal(0, 1, size=k)
+    pi = dirichlet(alpha).rvs()
+    sigma = InverseGamma(1,1).rvs(size=k)
+    out = np.empty((iters, k*3))
+
+    for i in range(iters):
+        # Update Parameters according to conditional posterior distributions
+        z_mat = update_z(data, mu, sigma, pi)
+        pi = update_pi(alpha, np.sum(z_mat, axis=0))
+        mu = update_mu(data, z_mat, sigma)
+        sigma = update_sigma(data, z_mat, mu)
+
+        # Store Values to monitor trace
+        out[i, 0:4] = mu
+        out[i, 4:8] = np.sqrt(sigma)
+        out[i, 8:12] = pi[0,:]
+    
+    return out[burnin:,:]
+
+# Fit the model and extract parameters
+trace = gibbs(y, 2000, 500, 4)
+params_dict = {}
+for j in range(len(mu)):
+    params_dict.update(
+        {
+            f&quot;mu{j}&quot;: np.round(np.mean(trace[:,j]),2),
+            f&quot;sigma{j}&quot;: np.round(np.mean(trace[:,j+4]),2),
+            f&quot;pi{j}&quot;: np.round(np.mean(trace[:,j+8]),2)
+        }
+    )
+
+x = np.linspace(-3,25, 500)
+plt.hist(y, 30, density=True, alpha=0.5);
+for j in range(len(mu)):
+    plt.plot(x, norm(mu[j], sigmas[j]).pdf(x), color=&quot;red&quot;)
+    plt.plot(x, norm(params_dict[f&quot;mu{j}&quot;], params_dict[f&quot;sigma{j}&quot;]).pdf(x), color=&quot;blue&quot;)
+plt.title(f&quot;Mixture of 4 Gaussians | {n} Iterations&quot;)
+legend_elements = [
+    Line2D([0], [0], color=&#39;blue&#39;, lw=4, label=&#39;Fitted&#39;),
+    Line2D([0], [0], color=&#39;red&#39;, lw=4, label=&#39;Actual&#39;)
+] 
+plt.legend(handles=legend_elements, loc=&quot;upper right&quot;)
+plt.grid()
+plt.savefig(&quot;mix4.png&quot;)</code></pre>
+<p><img src="mix4.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+<p>And one of the largest benefits of fitting the parameters using bayesian methods is that we can plot the full posterior distributions over <span class="math inline">\(\theta\)</span>, giving us uncertainty in our fit as well as our point estimates. The full posteriors can be plotted as follows:</p>
+<pre class="python"><code>fig, axs = plt.subplots(12,2)
+x = range(trace.shape[0])
+params = [&quot;mu1&quot;, &quot;mu2&quot;, &quot;mu3&quot;, &quot;mu4&quot;, &quot;sigma1&quot;, &quot;sigma2&quot;, &quot;sigma3&quot;, &quot;sigma4&quot;, &quot;pi1&quot;, &quot;pi2&quot;, &quot;pi3&quot;, &quot;pi4&quot;]
+for i, v in enumerate(params):
+    y = trace[:,i]
+    axs[i,0].plot(x, y)
+    axs[i,0].set_title(v)
+    axs[i,1].hist(y, 30, density=True, alpha=0.5);
+    axs[i,1].set_title(v)
+    axs[i,0].grid()
+    axs[i,1].grid()
+
+fig.suptitle(&quot;Trace of Parameters&quot;, fontsize=25)
+fig.set_figheight(20)
+fig.set_figwidth(15)
+fig.subplots_adjust(hspace=1)
+fig.savefig(&quot;trace_plot.png&quot;)</code></pre>
+<p><img src="trace_plot.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
+</div>
