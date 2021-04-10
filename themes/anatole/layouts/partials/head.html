@@ -11,6 +11,9 @@
     {{- end -}}
 
     <!-- CSS -->
+    <link rel="stylesheet" href="{{"css/github-gist.css" | absURL}}" rel="stylesheet" id="theme-stylesheet"> 
+    <script src="{{ "js/highlight.pack.js" | absURL }}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     {{ $style := resources.Get "css/style.css" | resources.Minify | resources.Fingerprint }}
     <link rel="stylesheet"
           href="{{ $style.RelPermalink }}"
