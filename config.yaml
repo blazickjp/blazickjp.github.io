@@ -4,24 +4,24 @@ languageCode: en
 DefaultContentLanguage: en
 title: Website of Joseph Blazick
 theme: anatole
-summarylength: 20
-enableEmoji: yes
-enableRobotsTXT: yes
-pygmentsUseClasses: yes
-pygmentsCodeFences: yes
-pygmentsCodefencesGuessSyntax: yes
+summarylength: 100
+enableEmoji: true
+enableRobotsTXT: true
+pygmentsUseClasses: true
+pygmentsCodeFences: true
+pygmentsCodefencesGuessSyntax: true
 params:
   author: Joseph Blazick
   customCss: []
   customJs: []
   description: Call me Joe
-  doNotLoadAnimations: no
+  doNotLoadAnimations: false
   favicon: favicons/
   images: images/site-feature-image.png
   keywords: ''
   mainSections: post
   math:
-    enable: yes
+    enable: true
   profilePicture: images/joe2.jpg
   simpleAnalytics: {}
   socialIcons:

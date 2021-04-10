@@ -13,7 +13,16 @@
       <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2021-04-03-dirichlet-processes/</guid>
-      <description>Extending to Infinite Components After working with mixture models, it’s natural to wonder how one should best determine the correct number of components to include in our models. One method for determining this is to extend our finite mixture model to the case of infinite components. Infinite components is going to require an infinite probability vector \(\pi\) and typically when thinking about a Dirichlet Distribution, we have \(K &amp;lt;&amp;lt; N\). Now we might ask ourselves what happens when \(K&amp;gt;&amp;gt;N\)? We know that the number of unique groups in our sample \(K^*\) will be less than \(N\). To see what this may look like, we can generate \(\pi \sim Dir\left(\frac{\alpha}{K}, .</description>
+      <description>Extending to Infinite Components After working with mixture models, it’s natural to wonder how one should best determine the correct number of components to include in our models.</description>
+    </item>
+    
+    <item>
+      <title>Extending K-Component GMM to the Bivariate Case</title>
+      <link>http://blazickjp.github.io/post/2021-04-10-extending-k-component-gmm-to-the-bivariate-case/</link>
+      <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>http://blazickjp.github.io/post/2021-04-10-extending-k-component-gmm-to-the-bivariate-case/</guid>
+      <description>Introduction In my previous post, we extended our Gibbs Sampler to handle any number of \(K\) Components and fit our model in the case where \(K=4\).</description>
     </item>
     
     <item>
@@ -22,8 +31,7 @@
       <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2020-10-17-extending-gmm-gibbs-sampling-to-k-components/</guid>
-      <description>Introduction In my previous post, I derived a Gibbs Sampler for a univariate Gaussian Mixture Model (GMM). In this post I will extend the sampler to handle the K-Component univariate GMM. As a quick reminder, Gibbs Sampling is a MCMC method for sampling from multivariate distributions that may be difficult to sample from directly. The method is commonly used in bayesian inference when sampling the the posterior or joint distribution in question. The samples generated from the Markov chain will converge to the desired distribution when \(N\) is large.
- K-Component GMM The K-Component GMM can be defined as \(p(x|\theta) = \sum_{j=1}^K\pi_j\phi_{\theta_j}(x)\).</description>
+      <description>Introduction In my previous post, I derived a Gibbs Sampler for a univariate Gaussian Mixture Model (GMM). In this post I will extend the sampler to handle the K-Component univariate GMM.</description>
     </item>
     
     <item>
@@ -32,7 +40,7 @@
       <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2020-09-04-gibbs-sampling-for-mixutre-of-normals/</guid>
-      <description>Gibbs Sampling Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined as \(p(\theta|data)\). The idea behind the Gibbs Sampler is to sweep through each one of the parameters and sample from their conditional distributions, fixing the other parameters constant. For example, consider the random variables \(X_1, X_2, X_3\) and assume that I can write out the analytic form of \(p(X_1|X_2,X_3), p(X_2|X_1,X_3), p(X_3|X_2,X_1)\) . We start by initializing \(x_{1,t}, x_{2,t}, x_{3,t}\) and for each iteration \(t\) we sample \(p(X_{1,t+1}|X_{2,t},X_{3,t})\), \(p(X_{2,t+1}|X_{1,t+1},X_{3,t})\), and \(p(X_{3,t+1}|X_{2,t+1},X_{3,t+1})\). This process can then continue until convergence. Algorithm 1 details a general Gibbs Sampler.</description>
+      <description>Gibbs Sampling Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined as \(p(\theta|data)\).</description>
     </item>
     
     <item>
@@ -59,10 +67,7 @@
       <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/about/</guid>
-      <description>Written in Go, Hugo is an open source static site generator available under the Apache Licence 2.0. Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content. Other notable features are taxonomies, multilingual mode, image processing, custom output formats, HTML/CSS/JS minification and support for Sass SCSS workflows.
-Hugo makes use of a variety of open source projects including:
- https://github.com/yuin/goldmark https://github.com/alecthomas/chroma https://github.com/muesli/smartcrop https://github.com/spf13/cobra https://github.com/spf13/viper  Hugo is ideal for blogs, corporate websites, creative portfolios, online magazines, single page applications or even a website with thousands of pages.
-Hugo is for people who want to hand code their own website without worrying about setting up complicated runtimes, dependencies and databases.</description>
+      <description>Written in Go, Hugo is an open source static site generator available under the Apache Licence 2.0. Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content.</description>
     </item>
     
   </channel>
