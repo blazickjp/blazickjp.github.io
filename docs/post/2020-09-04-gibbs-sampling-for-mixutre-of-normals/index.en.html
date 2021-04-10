@@ -69,6 +69,10 @@ code span.wa { color: #bf0303; } /* Warning */
 </style>
 
 
+<div id="gibbs-sampling" class="section level2">
+<h2>Gibbs Sampling</h2>
+<p>Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined
+as <span class="math inline">\(p(\theta|data)\)</span>. The idea behind the Gibbs Sampler is to sweep through each one of the parameters and sample from their conditional distributions, fixing the other parameters constant. For example, consider the random variables <span class="math inline">\(X_1, X_2, X_3\)</span> and assume that I can write out the analytic form of <span class="math inline">\(p(X_1|X_2,X_3), p(X_2|X_1,X_3), p(X_3|X_2,X_1)\)</span> . We start by initializing <span class="math inline">\(x_{1,t}, x_{2,t}, x_{3,t}\)</span> and for each iteration <span class="math inline">\(t\)</span> we sample <span class="math inline">\(p(X_{1,t+1}|X_{2,t},X_{3,t})\)</span>, <span class="math inline">\(p(X_{2,t+1}|X_{1,t+1},X_{3,t})\)</span>, and <span class="math inline">\(p(X_{3,t+1}|X_{2,t+1},X_{3,t+1})\)</span>. This process can then continue until convergence. Algorithm 1 details a general Gibbs Sampler.</p>
 <head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js"
         integrity="sha256-F/Xda58SPdcUCr+xhSGz9MA2zQBPb0ASEYKohl8UCHc=" crossorigin="anonymous">
@@ -77,10 +81,6 @@ code span.wa { color: #bf0303; } /* Warning */
 <script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js">
 </script>
 </head>
-<div id="gibbs-sampling" class="section level2">
-<h2>Gibbs Sampling</h2>
-<p>Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined
-as <span class="math inline">\(p(\theta|data)\)</span>. The idea behind the Gibbs Sampler is to sweep through each one of the parameters and sample from their conditional distributions, fixing the other parameters constant. For example, consider the random variables <span class="math inline">\(X_1, X_2, X_3\)</span> and assume that I can write out the analytic form of <span class="math inline">\(p(X_1|X_2,X_3), p(X_2|X_1,X_3), p(X_3|X_2,X_1)\)</span> . We start by initializing <span class="math inline">\(x_{1,t}, x_{2,t}, x_{3,t}\)</span> and for each iteration <span class="math inline">\(t\)</span> we sample <span class="math inline">\(p(X_{1,t+1}|X_{2,t},X_{3,t})\)</span>, <span class="math inline">\(p(X_{2,t+1}|X_{1,t+1},X_{3,t})\)</span>, and <span class="math inline">\(p(X_{3,t+1}|X_{2,t+1},X_{3,t+1})\)</span>. This process can then continue until convergence. Algorithm 1 details a general Gibbs Sampler.</p>
 <pre id="gibbs" style="display:hidden;">
     \begin{algorithm}
     \caption{Gibbs Sampling}
