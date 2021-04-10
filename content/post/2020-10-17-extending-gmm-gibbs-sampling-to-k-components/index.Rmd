@@ -2,6 +2,9 @@
 title: Extending GMM Gibbs Sampling to K-Components
 author: Joseph Blazick
 date: '2020-10-17'
+output:
+  blogdown::html_page:
+    highlight: kate
 slug: []
 categories: []
 tags: []
@@ -10,7 +13,6 @@ Tags: []
 Categories: []
 DisableComments: no
 ---
-
 ## Introduction
 
 In my previous post, I derived a Gibbs Sampler for a univariate Gaussian Mixture Model (GMM). In this post I will extend the sampler to handle the K-Component univariate GMM. As a quick reminder, Gibbs Sampling is a MCMC method for sampling from multivariate distributions that may be difficult to sample from directly. The method is commonly used in bayesian inference when sampling the the posterior or joint distribution in question. The samples generated from the Markov chain will converge to the desired distribution when $N$ is large. 

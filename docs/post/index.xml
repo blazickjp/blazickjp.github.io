@@ -13,7 +13,7 @@
       <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2021-04-03-dirichlet-processes/</guid>
-      <description>pre  code.sourceCode { white-space: pre; position: relative; } pre  code.</description>
+      <description>pre  code.sourceCode { white-space: pre; position: relative; } pre  code.sourceCode  span { display: inline-block; line-height: 1.</description>
     </item>
     
     <item>
@@ -22,7 +22,7 @@
       <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2020-10-17-extending-gmm-gibbs-sampling-to-k-components/</guid>
-      <description>Introduction In my previous post, I derived a Gibbs Sampler for a univariate Gaussian Mixture Model (GMM).</description>
+      <description>pre  code.sourceCode { white-space: pre; position: relative; } pre  code.sourceCode  span { display: inline-block; line-height: 1.</description>
     </item>
     
     <item>
@@ -31,7 +31,7 @@
       <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2020-09-04-gibbs-sampling-for-mixutre-of-normals/</guid>
-      <description>pre  code.sourceCode { white-space: pre; position: relative; } pre  code.</description>
+      <description>pre  code.sourceCode { white-space: pre; position: relative; } pre  code.sourceCode  span { display: inline-block; line-height: 1.</description>
     </item>
     
   </channel>
