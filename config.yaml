@@ -12,8 +12,8 @@ pygmentsCodeFences: true
 pygmentsCodefencesGuessSyntax: true
 params:
   author: Joseph Blazick
-  customCss: [css/syntax.css]
-  customJs: [js/higlight.min.js]
+  customCss: []
+  customJs: []
   description: Call me Joe
   doNotLoadAnimations: false
   favicon: favicons/
