@@ -2,9 +2,6 @@
 title: Extending GMM Gibbs Sampling to K-Components
 author: Joseph Blazick
 date: '2020-10-17'
-output:
-  blogdown::html_page:
-    highlight: kate
 slug: []
 categories: []
 tags: []
@@ -15,74 +12,6 @@ DisableComments: no
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
-<style type="text/css">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    background-color: #ffffff;
-    color: #a0a0a0;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
-div.sourceCode
-  { color: #1f1c1b; background-color: #ffffff; }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span { color: #1f1c1b; } /* Normal */
-code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
-code span.an { color: #ca60ca; } /* Annotation */
-code span.at { color: #0057ae; } /* Attribute */
-code span.bn { color: #b08000; } /* BaseN */
-code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
-code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #924c9d; } /* Char */
-code span.cn { color: #aa5500; } /* Constant */
-code span.co { color: #898887; } /* Comment */
-code span.cv { color: #0095ff; } /* CommentVar */
-code span.do { color: #607880; } /* Documentation */
-code span.dt { color: #0057ae; } /* DataType */
-code span.dv { color: #b08000; } /* DecVal */
-code span.er { color: #bf0303; text-decoration: underline; } /* Error */
-code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
-code span.fl { color: #b08000; } /* Float */
-code span.fu { color: #644a9b; } /* Function */
-code span.im { color: #ff5500; } /* Import */
-code span.in { color: #b08000; } /* Information */
-code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
-code span.op { color: #1f1c1b; } /* Operator */
-code span.ot { color: #006e28; } /* Other */
-code span.pp { color: #006e28; } /* Preprocessor */
-code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
-code span.sc { color: #3daee9; } /* SpecialChar */
-code span.ss { color: #ff5500; } /* SpecialString */
-code span.st { color: #bf0303; } /* String */
-code span.va { color: #0057ae; } /* Variable */
-code span.vs { color: #bf0303; } /* VerbatimString */
-code span.wa { color: #bf0303; } /* Warning */
-</style>
 
 
 <div id="introduction" class="section level2">
@@ -100,45 +29,45 @@ that <span class="math inline">\(K\)</span> is known, so let’s set <span class
 \sigma &amp; = \{1,1,2,3\}
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy.random <span class="im">import</span> binomial, normal, beta, multinomial</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.stats <span class="im">as</span> st</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> invgamma, norm, dirichlet, multivariate_normal</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.lines <span class="im">import</span> Line2D</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> distcan <span class="im">import</span> InverseGamma</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> data_gen(mu, sigmas, phi, n):</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    Generates samples from Mixture of K Gaussian Distributions</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> []</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        ind <span class="op">=</span> multinomial(<span class="dv">1</span>, phi)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j, val <span class="kw">in</span> <span class="bu">enumerate</span>(ind):</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> val <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                y.append(norm(mu[j], sigmas[j]).rvs())</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                <span class="bu">next</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(y)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Set Starting Parameters</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> [<span class="dv">0</span>,<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">16</span>]</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>sigmas <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> [<span class="fl">.2</span>,<span class="fl">.2</span>,<span class="fl">.2</span>,<span class="fl">.4</span>]</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">2000</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> data_gen(mu<span class="op">=</span>mu, sigmas<span class="op">=</span>sigmas, phi<span class="op">=</span>phi, n<span class="op">=</span>n)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">3</span>,<span class="dv">25</span>)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Create Plot of Data </span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)<span class="op">;</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">0</span>], sigmas[<span class="dv">0</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">1</span>], sigmas[<span class="dv">1</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>)</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">2</span>], sigmas[<span class="dv">2</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;green&quot;</span>)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.plot(x, norm(mu[<span class="dv">3</span>], sigmas[<span class="dv">3</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;yellow&quot;</span>)</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">&quot;Mixture of 2 Gaussians Data&quot;</span>)</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;mix2.png&quot;</span>)</span></code></pre></div>
+<pre class="python"><code>import numpy as np
+from numpy.random import binomial, normal, beta, multinomial
+import scipy.stats as st
+from scipy.stats import invgamma, norm, dirichlet, multivariate_normal
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from distcan import InverseGamma
+
+def data_gen(mu, sigmas, phi, n):
+    &quot;&quot;&quot;
+    Generates samples from Mixture of K Gaussian Distributions
+    &quot;&quot;&quot;
+    y = []
+    for i in range(n):
+        ind = multinomial(1, phi)
+        for j, val in enumerate(ind):
+            if val == 1:
+                y.append(norm(mu[j], sigmas[j]).rvs())
+            else:
+                next
+    return np.array(y)
+
+# Set Starting Parameters
+mu = [0,4,8,16]
+sigmas = [1,1,2,3]
+phi = [.2,.2,.2,.4]
+n = 2000
+y = data_gen(mu=mu, sigmas=sigmas, phi=phi, n=n)
+x = np.linspace(-3,25)
+
+# Create Plot of Data 
+plt.hist(y, 30, density=True, alpha=0.5);
+plt.plot(x, norm(mu[0], sigmas[0]).pdf(x), color=&quot;red&quot;)
+plt.plot(x, norm(mu[1], sigmas[1]).pdf(x), color=&quot;blue&quot;)
+plt.plot(x, norm(mu[2], sigmas[2]).pdf(x), color=&quot;green&quot;)
+plt.plot(x, norm(mu[3], sigmas[3]).pdf(x), color=&quot;yellow&quot;)
+plt.title(&quot;Mixture of 2 Gaussians Data&quot;)
+plt.grid()
+plt.savefig(&quot;mix2.png&quot;)</code></pre>
 <p><img src="mix2.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="the-dirichlet-distribution" class="section level2">
@@ -181,12 +110,12 @@ p(\pi|x, z, \pmb{\sigma}, \pmb{\mu}) &amp; \propto \prod_{j=1}^K \pi_j^{\alpha_j
 p(\pi|x, z) &amp; \sim Dir\left(\sum_{i=1}^Nz_1 + \alpha_1, ..., \sum_{i=1}^Nz_k + \alpha_k\right) 
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_pi(alpha_vec, z_vec):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from Posterior Conditional for pi</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">len</span>(z_vec) <span class="op">==</span> <span class="bu">len</span>(alpha_vec), <span class="st">&quot;Number of distributions must equal number of parameters&quot;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dirichlet(z_vec <span class="op">+</span> alpha_vec).rvs()</span></code></pre></div>
+<pre class="python"><code>def update_pi(alpha_vec, z_vec):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for pi
+    &quot;&quot;&quot;
+    assert len(z_vec) == len(alpha_vec), &quot;Number of distributions must equal number of parameters&quot;
+    return dirichlet(z_vec + alpha_vec).rvs()</code></pre>
 </div>
 <div id="complete-conditionals-for-pmbmu-pmbsigma" class="section level2">
 <h2>Complete Conditionals for <span class="math inline">\(\pmb{\mu}\)</span>, <span class="math inline">\(\pmb{\sigma}\)</span></h2>
@@ -197,124 +126,124 @@ p(\mu | x, z, \pmb{\sigma}, \pmb{\pi}) \sim N \left(\frac{\tilde{x_j}}{n_j + 1},
 \end{align*}
 \]</span></p>
 <p>Notice that in the code we sample from a multivariate normal with the variances on the diagonal. This is purely to speed up the calculations and equivalent to the statement above.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_mu(y, z_mat, sigma_vec):</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from Posterior Conditional for mu</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    mu_vec <span class="op">=</span> []</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    n_j <span class="op">=</span>  np.<span class="bu">sum</span>(z_mat, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(sigma_vec)):</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        sigma_vec[j] <span class="op">=</span> sigma_vec[j] <span class="op">/</span> (n_j[j] <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        mu_vec.append(np.<span class="bu">sum</span>(y <span class="op">*</span> z_mat[:,j]) <span class="op">/</span> (n_j[j] <span class="op">+</span> <span class="dv">1</span>))</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> np.diag(sigma_vec)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> multivariate_normal(mu_vec, cov).rvs()</span></code></pre></div>
+<pre class="python"><code>def update_mu(y, z_mat, sigma_vec):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for mu
+    &quot;&quot;&quot;
+    mu_vec = []
+    n_j =  np.sum(z_mat, axis=0)
+    for j in range(len(sigma_vec)):
+        sigma_vec[j] = sigma_vec[j] / (n_j[j] + 1)
+        mu_vec.append(np.sum(y * z_mat[:,j]) / (n_j[j] + 1))
+    
+    cov = np.diag(sigma_vec)
+    return multivariate_normal(mu_vec, cov).rvs()</code></pre>
 <p>Moving on to <span class="math inline">\(\sigma^2\)</span>:</p>
 <p><span class="math display">\[
 \begin{align*}
 p(\mu|x, z, \pmb{\sigma}, \pmb{\pi}) &amp; \sim IG\left(\frac{1}{2}n_j + 1, 1 + \frac{1}{2}\sum_{i=1}^N(x-\mu_j)^2\right)
 \end{align*}
 \]</span></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_sigma(data, z_mat, mu):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from Posterior Conditional for sigma</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    n_j <span class="op">=</span> np.<span class="bu">sum</span>(z_mat, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> (<span class="fl">0.5</span> <span class="op">*</span> n_j) <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> []</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(mu)):</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> data <span class="op">*</span> z_mat[:,j]</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> y[y <span class="op">!=</span> <span class="dv">0</span>]</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        beta.append((<span class="fl">0.5</span> <span class="op">*</span> np.square(y <span class="op">-</span> mu[j]).<span class="bu">sum</span>()) <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> InverseGamma(alpha, beta).rvs()</span></code></pre></div>
+<pre class="python"><code>def update_sigma(data, z_mat, mu):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for sigma
+    &quot;&quot;&quot;
+    n_j = np.sum(z_mat, axis=0)
+    alpha = (0.5 * n_j) + 1
+    beta = []
+    for j in range(len(mu)):
+        y = data * z_mat[:,j]
+        y = y[y != 0]
+        beta.append((0.5 * np.square(y - mu[j]).sum()) + 1)
+    return InverseGamma(alpha, beta).rvs()</code></pre>
 <p>The updates for each <span class="math inline">\(z_{i,j}\)</span> is also still the same:</p>
 <p><span class="math display">\[ 
 \begin{align*} 
 p(z|\theta,x) &amp; = \frac{\pi_j\phi_{\theta_1}(x_i)}{\sum_{j=1}^K\pi_j\phi_{\theta_j}(x_i)}
 \end{align*} 
 \]</span></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_z(data: <span class="bu">list</span>, mu, sigma, pi):</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Sample from latent variable Z according to likelihoods for class assignment</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> np.empty((<span class="bu">len</span>(data), <span class="bu">len</span>(mu)))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> np.empty((<span class="bu">len</span>(data), <span class="bu">len</span>(mu)))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(mu)):</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        a[:,j] <span class="op">=</span> norm(mu[j], np.sqrt(sigma[j])).pdf(data) <span class="op">*</span> pi[<span class="dv">0</span>,j]</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    pi_i <span class="op">=</span> a <span class="op">/</span> np.<span class="bu">sum</span>(a, axis<span class="op">=</span><span class="dv">1</span>)[:,<span class="va">None</span>]</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(data)):</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        out[i,] <span class="op">=</span> multinomial(<span class="dv">1</span>, pi_i[i,:])</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out</span></code></pre></div>
+<pre class="python"><code>def update_z(data: list, mu, sigma, pi):
+    &quot;&quot;&quot;
+    Sample from latent variable Z according to likelihoods for class assignment
+    &quot;&quot;&quot;
+    a = np.empty((len(data), len(mu)))
+    out = np.empty((len(data), len(mu)))
+    for j in range(len(mu)):
+        a[:,j] = norm(mu[j], np.sqrt(sigma[j])).pdf(data) * pi[0,j]
+    
+    pi_i = a / np.sum(a, axis=1)[:,None]
+    for i in range(len(data)):
+        out[i,] = multinomial(1, pi_i[i,:])
+    return out</code></pre>
 <p>Finally, the Gibbs algorithm is the same with minor code differences to account for the changes in parameters and data structures</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gibbs(data, iters, burnin, k):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Run Gibb&#39;s Sampling for Mixture of 2 Gaussians. Initial States are sample from Priors</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set initial guesses based on priors</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>]</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> normal(<span class="dv">0</span>, <span class="dv">1</span>, size<span class="op">=</span>k)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    pi <span class="op">=</span> dirichlet(alpha).rvs()</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    sigma <span class="op">=</span> InverseGamma(<span class="dv">1</span>,<span class="dv">1</span>).rvs(size<span class="op">=</span>k)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> np.empty((iters, k<span class="op">*</span><span class="dv">3</span>))</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(iters):</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Update Parameters according to conditional posterior distributions</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        z_mat <span class="op">=</span> update_z(data, mu, sigma, pi)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        pi <span class="op">=</span> update_pi(alpha, np.<span class="bu">sum</span>(z_mat, axis<span class="op">=</span><span class="dv">0</span>))</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        mu <span class="op">=</span> update_mu(data, z_mat, sigma)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        sigma <span class="op">=</span> update_sigma(data, z_mat, mu)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Store Values to monitor trace</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        out[i, <span class="dv">0</span>:<span class="dv">4</span>] <span class="op">=</span> mu</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        out[i, <span class="dv">4</span>:<span class="dv">8</span>] <span class="op">=</span> np.sqrt(sigma)</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        out[i, <span class="dv">8</span>:<span class="dv">12</span>] <span class="op">=</span> pi[<span class="dv">0</span>,:]</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out[burnin:,:]</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model and extract parameters</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>trace <span class="op">=</span> gibbs(y, <span class="dv">2000</span>, <span class="dv">500</span>, <span class="dv">4</span>)</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>params_dict <span class="op">=</span> {}</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(mu)):</span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    params_dict.update(</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        {</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f&quot;mu</span><span class="sc">{j}</span><span class="ss">&quot;</span>: np.<span class="bu">round</span>(np.mean(trace[:,j]),<span class="dv">2</span>),</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f&quot;sigma</span><span class="sc">{j}</span><span class="ss">&quot;</span>: np.<span class="bu">round</span>(np.mean(trace[:,j<span class="op">+</span><span class="dv">4</span>]),<span class="dv">2</span>),</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f&quot;pi</span><span class="sc">{j}</span><span class="ss">&quot;</span>: np.<span class="bu">round</span>(np.mean(trace[:,j<span class="op">+</span><span class="dv">8</span>]),<span class="dv">2</span>)</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">3</span>,<span class="dv">25</span>, <span class="dv">500</span>)</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>plt.hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)<span class="op">;</span></span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(mu)):</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    plt.plot(x, norm(mu[j], sigmas[j]).pdf(x), color<span class="op">=</span><span class="st">&quot;red&quot;</span>)</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    plt.plot(x, norm(params_dict[<span class="ss">f&quot;mu</span><span class="sc">{j}</span><span class="ss">&quot;</span>], params_dict[<span class="ss">f&quot;sigma</span><span class="sc">{j}</span><span class="ss">&quot;</span>]).pdf(x), color<span class="op">=</span><span class="st">&quot;blue&quot;</span>)</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f&quot;Mixture of 4 Gaussians | </span><span class="sc">{n}</span><span class="ss"> Iterations&quot;</span>)</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>legend_elements <span class="op">=</span> [</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    Line2D([<span class="dv">0</span>], [<span class="dv">0</span>], color<span class="op">=</span><span class="st">&#39;blue&#39;</span>, lw<span class="op">=</span><span class="dv">4</span>, label<span class="op">=</span><span class="st">&#39;Fitted&#39;</span>),</span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    Line2D([<span class="dv">0</span>], [<span class="dv">0</span>], color<span class="op">=</span><span class="st">&#39;red&#39;</span>, lw<span class="op">=</span><span class="dv">4</span>, label<span class="op">=</span><span class="st">&#39;Actual&#39;</span>)</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>] </span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>plt.legend(handles<span class="op">=</span>legend_elements, loc<span class="op">=</span><span class="st">&quot;upper right&quot;</span>)</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>plt.grid()</span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">&quot;mix4.png&quot;</span>)</span></code></pre></div>
+<pre class="python"><code>def gibbs(data, iters, burnin, k):
+    &quot;&quot;&quot;
+    Run Gibb&#39;s Sampling for Mixture of 2 Gaussians. Initial States are sample from Priors
+    &quot;&quot;&quot;
+    # Set initial guesses based on priors
+    alpha = [1,1,1,1]
+    mu = normal(0, 1, size=k)
+    pi = dirichlet(alpha).rvs()
+    sigma = InverseGamma(1,1).rvs(size=k)
+    out = np.empty((iters, k*3))
+
+    for i in range(iters):
+        # Update Parameters according to conditional posterior distributions
+        z_mat = update_z(data, mu, sigma, pi)
+        pi = update_pi(alpha, np.sum(z_mat, axis=0))
+        mu = update_mu(data, z_mat, sigma)
+        sigma = update_sigma(data, z_mat, mu)
+
+        # Store Values to monitor trace
+        out[i, 0:4] = mu
+        out[i, 4:8] = np.sqrt(sigma)
+        out[i, 8:12] = pi[0,:]
+    
+    return out[burnin:,:]
+
+# Fit the model and extract parameters
+trace = gibbs(y, 2000, 500, 4)
+params_dict = {}
+for j in range(len(mu)):
+    params_dict.update(
+        {
+            f&quot;mu{j}&quot;: np.round(np.mean(trace[:,j]),2),
+            f&quot;sigma{j}&quot;: np.round(np.mean(trace[:,j+4]),2),
+            f&quot;pi{j}&quot;: np.round(np.mean(trace[:,j+8]),2)
+        }
+    )
+
+x = np.linspace(-3,25, 500)
+plt.hist(y, 30, density=True, alpha=0.5);
+for j in range(len(mu)):
+    plt.plot(x, norm(mu[j], sigmas[j]).pdf(x), color=&quot;red&quot;)
+    plt.plot(x, norm(params_dict[f&quot;mu{j}&quot;], params_dict[f&quot;sigma{j}&quot;]).pdf(x), color=&quot;blue&quot;)
+plt.title(f&quot;Mixture of 4 Gaussians | {n} Iterations&quot;)
+legend_elements = [
+    Line2D([0], [0], color=&#39;blue&#39;, lw=4, label=&#39;Fitted&#39;),
+    Line2D([0], [0], color=&#39;red&#39;, lw=4, label=&#39;Actual&#39;)
+] 
+plt.legend(handles=legend_elements, loc=&quot;upper right&quot;)
+plt.grid()
+plt.savefig(&quot;mix4.png&quot;)</code></pre>
 <p><img src="mix4.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 <p>And one of the largest benefits of fitting the parameters using bayesian methods is that we can plot the full posterior distributions over <span class="math inline">\(\theta\)</span>, giving us uncertainty in our fit as well as our point estimates. The full posteriors can be plotted as follows:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">12</span>,<span class="dv">2</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="bu">range</span>(trace.shape[<span class="dv">0</span>])</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> [<span class="st">&quot;mu1&quot;</span>, <span class="st">&quot;mu2&quot;</span>, <span class="st">&quot;mu3&quot;</span>, <span class="st">&quot;mu4&quot;</span>, <span class="st">&quot;sigma1&quot;</span>, <span class="st">&quot;sigma2&quot;</span>, <span class="st">&quot;sigma3&quot;</span>, <span class="st">&quot;sigma4&quot;</span>, <span class="st">&quot;pi1&quot;</span>, <span class="st">&quot;pi2&quot;</span>, <span class="st">&quot;pi3&quot;</span>, <span class="st">&quot;pi4&quot;</span>]</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, v <span class="kw">in</span> <span class="bu">enumerate</span>(params):</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> trace[:,i]</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">0</span>].plot(x, y)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">0</span>].set_title(v)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">1</span>].hist(y, <span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)<span class="op">;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">1</span>].set_title(v)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">0</span>].grid()</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    axs[i,<span class="dv">1</span>].grid()</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">&quot;Trace of Parameters&quot;</span>, fontsize<span class="op">=</span><span class="dv">25</span>)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>fig.set_figheight(<span class="dv">20</span>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>fig.set_figwidth(<span class="dv">15</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>fig.subplots_adjust(hspace<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">&quot;trace_plot.png&quot;</span>)</span></code></pre></div>
+<pre class="python"><code>fig, axs = plt.subplots(12,2)
+x = range(trace.shape[0])
+params = [&quot;mu1&quot;, &quot;mu2&quot;, &quot;mu3&quot;, &quot;mu4&quot;, &quot;sigma1&quot;, &quot;sigma2&quot;, &quot;sigma3&quot;, &quot;sigma4&quot;, &quot;pi1&quot;, &quot;pi2&quot;, &quot;pi3&quot;, &quot;pi4&quot;]
+for i, v in enumerate(params):
+    y = trace[:,i]
+    axs[i,0].plot(x, y)
+    axs[i,0].set_title(v)
+    axs[i,1].hist(y, 30, density=True, alpha=0.5);
+    axs[i,1].set_title(v)
+    axs[i,0].grid()
+    axs[i,1].grid()
+
+fig.suptitle(&quot;Trace of Parameters&quot;, fontsize=25)
+fig.set_figheight(20)
+fig.set_figwidth(15)
+fig.subplots_adjust(hspace=1)
+fig.savefig(&quot;trace_plot.png&quot;)</code></pre>
 <p><img src="trace_plot.png" width="100%" height="100%" style="display: block; margin: auto;" /></p>
 </div>

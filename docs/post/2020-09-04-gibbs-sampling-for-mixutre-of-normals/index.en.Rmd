@@ -2,9 +2,6 @@
 title: Gibbs Sampling for Mixutre of Normals
 author: Joseph Blazick
 date: '2020-09-04'
-output:
-  blogdown::html_page:
-    highlight: kate
 slug: []
 categories: []
 tags: []
@@ -13,6 +10,7 @@ Tags: []
 Categories: []
 DisableComments: no
 ---
+
 ## Gibbs Sampling
 
 Gibbs sampling is a Markov Chain Monte Carlo method for sampling from a posterior distribution usually defined 
