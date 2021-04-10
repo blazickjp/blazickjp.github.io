@@ -11,9 +11,12 @@
     {{- end -}}
 
     <!-- CSS -->
-    <link rel="stylesheet" href="{{"css/github-gist.css" | absURL}}" rel="stylesheet" id="theme-stylesheet"> 
-    <script src="{{ "js/highlight.pack.js" | absURL }}"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    {{ $styleCode := resources.Get "css/github-gist.css" | resources.Minify | resources.Fingerprint }}
+
+    <link rel="stylesheet" 
+          href="{{ $styleCode.RelPermalink }}" 
+          type="text/css">
+    
     {{ $style := resources.Get "css/style.css" | resources.Minify | resources.Fingerprint }}
     <link rel="stylesheet"
           href="{{ $style.RelPermalink }}"
@@ -54,6 +57,10 @@
     {{ end -}}
 
     <!-- JavaScript -->
+    {{ $hljs := resources.Get "js/highlight.pack.js" }}
+
+    <script src="{{ $hljs.RelPermalink }}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
     {{ $anatoleHeader := resources.Get "js/anatole-header.js" }}
     {{ $secureHeaderJS := $anatoleHeader |  resources.Minify | resources.Fingerprint }}
     <script type="text/javascript"
