@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme=""><head>
+    <title> Joseph Blazick | Extending K-Component GMM to the Bivariate Case </title>
+
+    
+    <meta charset="utf-8"><meta name="generator" content="Hugo 0.82.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="Call me Joe">
+    
+    <link rel="stylesheet"
+          href="/css/style.min.2277e4d1f5f913138c1883033695f7a9779a2dcdc66ae94d514bd151bebd8f78.css"
+          integrity="sha256-Infk0fX5ExOMGIMDNpX3qXeaLc3GaulNUUvRUb69j3g="
+          crossorigin="anonymous"
+          type="text/css">
+    
+    <link rel="stylesheet"
+        href="/css/markupHighlight.min.f798cbda9aaa38f89eb38be6414bd082cfd71a6780375cbf67b6d2fb2b96491e.css"
+        integrity="sha256-95jL2pqqOPies4vmQUvQgs/XGmeAN1y/Z7bS&#43;yuWSR4="
+        crossorigin="anonymous"
+        type="text/css">
+    
+    <link rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" 
+    integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" 
+    crossorigin="anonymous" />
+
+    
+    <link rel="shortcut icon" href="/favicons/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+
+    <link rel="canonical" href="/post/2021-04-10-bivariate-gmm/">
+
+    
+    
+    
+    
+    <script type="text/javascript"
+            src="/js/anatole-header.min.0c05c0a90d28c968a1cad4fb31abd0b8e1264e788ccefed022ae1d3b6f627514.js"
+            integrity="sha256-DAXAqQ0oyWihytT7MavQuOEmTniMzv7QIq4dO29idRQ="
+            crossorigin="anonymous"></script>
+
+
+    
+        
+        
+        <script type="text/javascript"
+                src="/js/anatole-theme-switcher.min.8ef71e0fd43f21a303733dbbecae5438b791d2b826c68a9883bd7aa459a076d2.js"
+                integrity="sha256-jvceD9Q/IaMDcz277K5UOLeR0rgmxoqYg716pFmgdtI="
+                crossorigin="anonymous"></script>
+    
+    <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://blazickjp.github.io/105"/>
+
+<meta name="twitter:title" content="Extending K-Component GMM to the Bivariate Case"/>
+<meta name="twitter:description" content="Introduction In my previous post, we extended our Gibbs Sampler to handle any number of \(K\) Components and fit our model in the case where \(K=4\). We can now move on and extend our model to handle the Multivariate case. I stick to demonstrating the model on the bivariate case for simplicity and to better enable visualization of the results.
+ K-Component Bivariate GMM The K-Component Bivariate is defined exactly like the univariate case, \(p(x|\theta) = \sum_{j=1}^K\pi_j\phi_{\theta_j}(x)\) except that \(\phi_{\theta_j}(x)\) is defined by the multivariate Gaussian distribution:
+\[ \begin{align*} \phi_{\theta_j}(x) &amp; = \frac{1}{\sqrt{2\pi\left|\Sigma_j\right|}}\exp^{\frac{1}{2}(x-\pmb{\mu_j})^T\Sigma^{-1}(x-\pmb{\mu_j})} \end{align*} \]
+We can generate our data using a similar method as before, except we extend \(\pmb{\mu_j}\) to the vector \(\pmb{\pmb{\mu_j}}\) and \(\sigma_j\) becomes the covariance matrix \(\Sigma_j\)."/>
+
+
+    
+</head>
+<body><div class="sidebar animated fadeInDown ">
+    <div class="logo-title">
+        <div class="title">
+            <img src="/images/joe2.jpg" alt="profile picture">
+            <h3 title=""><a href="/">I&#39;m Joseph Blazick</a></h3>
+            <div class="description">
+                <p>Call me Joe</p>
+            </div>
+        </div>
+    </div>
+    <ul class="social-links">
+        
+            <li>
+                <a href="https://www.linkedin.com/in/joe-blazick-119307a2/" rel="me" aria-label="Linkedin">
+                    <i class="fab fa-linkedin fa-2x" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            <li>
+                <a href="https://github.com/blazickjp" rel="me" aria-label="GitHub">
+                    <i class="fab fa-github fa-2x" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            <li>
+                <a href="mailto:joe.blazick@yahoo.com" rel="me" aria-label="e-mail">
+                    <i class="fas fa-envelope fa-2x" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+    </ul>
+    <div class="footer">
+        <div class="by_farbox">&copy; Joseph Blazick  2021 </div>
+    </div>
+</div>
+<div class="main">
+    <div class="page-top  animated fadeInDown ">
+    <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+    </a>
+    <ul class="nav" id="navMenu">
+        
+        
+            
+            <li><a 
+                   href="/"
+                        
+                   title="">Home</a></li>
+        
+            
+            <li><a 
+                   href="/post/"
+                        
+                   title="">Posts</a></li>
+        
+            
+            <li><a 
+                   href="/about/"
+                        
+                   title="">About</a></li>
+        
+            
+            <li><a 
+                   href="/contact/"
+                        
+                   title="">Contact</a></li>
+        
+        
+        
+            <li class="theme-switch-item">
+                <a class="theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
+    <div class="autopagerize_page_element">
+        <div class="content">
+    <div class="post  animated fadeInDown ">
+        <div class="post-content">
+            
+            <div class="post-title">
+                <h3>Extending K-Component GMM to the Bivariate Case</h3>
+                
+                    <div class="info">
+                        <em class="fas fa-calendar-day"></em>
+                        <span class="date"> Mon, Nov 2, 2020 
+                                           </span>
+                        <em class="fas fa-stopwatch"></em>
+                        <span class="reading-time">6-minute read</span>
+                    </div>
+                
+            </div>
+
+            
+<script src="http://blazickjp.github.io/post/2021-04-10-bivariate-gmm/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In my previous post, we extended our Gibbs Sampler to handle any number of <span class="math inline">\(K\)</span> Components and fit our model in the case where <span class="math inline">\(K=4\)</span>. We can now move on and extend our model to handle the Multivariate case. I stick to demonstrating the model on the bivariate case for simplicity and to better enable visualization of the results.</p>
+</div>
+<div id="k-component-bivariate-gmm" class="section level2">
+<h2>K-Component Bivariate GMM</h2>
+<p>The K-Component Bivariate is defined exactly like the univariate case,
+<span class="math inline">\(p(x|\theta) = \sum_{j=1}^K\pi_j\phi_{\theta_j}(x)\)</span> except that <span class="math inline">\(\phi_{\theta_j}(x)\)</span> is defined by the multivariate Gaussian distribution:</p>
+<p><span class="math display">\[
+\begin{align*}
+\phi_{\theta_j}(x) &amp; = \frac{1}{\sqrt{2\pi\left|\Sigma_j\right|}}\exp^{\frac{1}{2}(x-\pmb{\mu_j})^T\Sigma^{-1}(x-\pmb{\mu_j})}
+\end{align*}
+\]</span></p>
+<p>We can generate our data using a similar method as before, except we extend <span class="math inline">\(\pmb{\mu_j}\)</span> to the vector <span class="math inline">\(\pmb{\pmb{\mu_j}}\)</span> and
+<span class="math inline">\(\sigma_j\)</span> becomes the covariance matrix <span class="math inline">\(\Sigma_j\)</span>.</p>
+<pre class="python"><code>import numpy as np
+from numpy.random import binomial, normal, beta, multinomial
+from scipy.stats import invwishart, norm, dirichlet, multivariate_normal
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+import math
+import seaborn as sns
+import pandas as pd
+
+def data_gen(mu, cov, phi, n):
+    &quot;&quot;&quot;
+    Generates samples from Mixture of K Multivariate Gaussian Distributions
+    &quot;&quot;&quot;
+
+    y = np.empty((n, 2))
+    for i in range(n):
+        ind = multinomial(1, phi)
+        for j, val in enumerate(ind):
+            if val == 1:
+                y[i,:] = np.random.multivariate_normal(mu[j,:], cov[j,:,:])
+            else:
+                next
+    return np.array(y)
+
+# Define parameters for K=3 Mixture of Multivariate Gaussians
+phi = [.3, .5, .2]
+mu = np.array([[3,5], [0,-1], [-3,5]])
+cov_1 = np.array([[2.0, 0.3], [0.3, 0.5]])
+cov_2 = np.array([[3.0,.4], [.4,3.0]])    
+cov_3 = np.array([[2,-.7], [-.7,1.7]])
+cov = np.stack((cov_1, cov_2, cov_3), axis = 0)
+
+data = data_gen(mu, cov, phi, 500)
+x, y = np.mgrid[-5:8:.1, -4:8:.1]
+pos = np.dstack((x,y))
+
+fig, ax = plt.subplots()
+ax.scatter(data[:,0], data[:,1], alpha = .6)
+for i in range(len(mu)):
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x12ae15fd0&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x12bc03f70&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x12ae15f40&gt;</code></pre>
+<pre class="python"><code>fig.suptitle(&quot;K=3 Bivariate Gaussian Distributions Data&quot;)
+ax.grid()
+fig.savefig(&quot;k3.png&quot;)</code></pre>
+<p><img src="k3.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="prior-distributions" class="section level2">
+<h2>Prior Distributions</h2>
+<p>Extending our model to the multivariate case requires changes in our prior and posterior distributions. Our new prior distributions for <span class="math inline">\(\pmb{\pmb{\mu_j}}\)</span> and <span class="math inline">\(\Sigma_j\)</span> are extensions of the univariate Inverse-Gamma and Normal distributions. We can define the joint prior over <span class="math inline">\(p(\pmb{\pmb{\mu_j}}, \Sigma_j)\)</span> by the Normal-Inverse-Wishart Distribution which is conjugate to the multivariate Normal. As with our other models, we assume independence between <span class="math inline">\(\pmb{\pmb{\mu_j}}\)</span> and <span class="math inline">\(\Sigma_j\)</span>.</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\Sigma_j) &amp; \sim W^{-1}(v_o, \Lambda_o)\\
+p(\pmb{\mu_j}|\Sigma_j) &amp; \sim N(\pmb{\xi_o}, \frac{\Sigma_j}{\kappa_o})\\
+p(\pmb{\mu_j}, \Sigma_j) &amp; \sim NIW(\pmb{\xi_o}, \kappa_o, \Lambda_o, v_o)\\
+&amp; \propto \left|\Sigma_j\right|^{-\frac{v_o + d}{2}-1}\exp\left(-\frac{1}{2}tr(\Lambda_o\Sigma_j^{-1})- \frac{\kappa_o}{2}(\pmb{\mu_j} - \pmb{\xi_o})^T\Sigma_j^{-1}(\pmb{\mu_j} - \pmb{\xi_o})\right)
+\end{align*}
+\]</span></p>
+</div>
+<div id="complete-conditional-for-pmbmu_j-and-sigma_j" class="section level2">
+<h2>Complete Conditional for <span class="math inline">\(\pmb{\mu_j}\)</span> and <span class="math inline">\(\Sigma_j\)</span></h2>
+<p>We know from our last post that</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\theta|x,z) \propto p(x, z| \theta)p(\pmb{\pi})\prod_{j=1}^k\left[p(\pmb{\mu_j})p(\Sigma_j)\right]
+\end{align*}
+\]</span></p>
+<p>and because of independence we can rewrite this as:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\theta|x,z) \propto p(x, z| \theta)p(\pmb{\pi})\prod_{j=1}^k\left[p(\pmb{\mu_j}, \Sigma_j)\right]
+\end{align*}
+\]</span></p>
+<p>which leads to the conditional density</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\pmb{\mu_j}, \Sigma_j | z, x, \pi) &amp; \propto \prod_{i=1}^N\phi_{\theta_j}(\pmb{x_i})^{z_j}\left|\Sigma_j\right|^{-\frac{v_o + d}{2}-1}\exp\left(-\frac{1}{2}\text{tr}(\Lambda_o\Sigma_j^{-1})- \frac{\kappa_o}{2}(\pmb{\mu_j} - \pmb{\xi_o})^T\Sigma_j^{-1}(\pmb{\mu_j} - \pmb{\xi_o})\right)\\
+&amp; \propto \prod_{i=1}^N\left|\Sigma_j\right|^{-\frac{1}{2}}\exp\left(-\frac{1}{2}(\pmb{x_i}-\pmb{\mu_j})^T\Sigma_j^{-1}(\pmb{x_i}-\pmb{\mu_j})\right)\left|\Sigma_j\right|^{-\frac{v_o + d}{2}-1}\exp\left(-\frac{1}{2}\text{tr}(\Lambda_o\Sigma_j^{-1})- \frac{\kappa_o}{2}(\pmb{\mu_j} - \pmb{\xi_o})^T\Sigma_j^{-1}(\pmb{\mu_j} - \pmb{\xi_o})\right)\\
+&amp; \propto \left|\Sigma_j\right|^{-\frac{d+v_o+n_j}{2}-1}\exp\left(-\frac{1}{2}\sum_{i=1}^N(\pmb{x_i}-\pmb{\mu_j})^T\Sigma_j^{-1}(\pmb{x_i}-\pmb{\mu_j}) - \frac{\kappa_o}{2}(\pmb{\mu_j} - \pmb{\xi_o})^T\Sigma_j^{-1}(\pmb{\mu_j} - \pmb{\xi_o}) - \frac{1}{2}\text{tr}(\Lambda_o\Sigma_j^{-1})\right)\\
+\end{align*}
+\]</span></p>
+<p>Now we can condition on <span class="math inline">\(\pmb{\mu_j}\)</span> to get our first complete conditional. The terms in red can be absorbed into a constant term due to conditioning.</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\pmb{\mu_j} | \Sigma_j, z, x, \pi) &amp; \propto \exp \left(-\frac{1}{2}\left[\sum_{i=1}^N \color{red}{z_{ij}\pmb{x_i}^T\Sigma_j^{-1}\pmb{x_i}} - z_{ij}2\pmb{x_i}^T\Sigma_j^{-1}\pmb{\mu_j} + z_{ij}\pmb{\mu_j}^T\Sigma_j^{-1}\pmb{\mu_j}\right] - \frac{\kappa_o}{2}\left[\pmb{\mu_j}^T\Sigma_j^{-1}\pmb{\mu_j} - 2\pmb{\mu_j}^T\Sigma_j^{-1}\pmb{\xi_o} + \color{red}{\pmb{\xi_o}^T\Sigma_j^{-1}\pmb{\xi_o}}\right]\right)\\
+&amp; \propto \exp \left(-\frac{1}{2}\left[(n_j+\kappa_o)\pmb{\mu_j}^T\Sigma_j^{-1}\pmb{\mu_j} + 2\sum_{i=1}^Nz_{ij}\pmb{x_i}^T\Sigma_j^{-1}\pmb{\mu_j} + 2\kappa_o\pmb{\mu_j}^T\Sigma_j^{-1}\pmb{\xi_o}\right]\right)\\
+&amp; \propto \exp \left(-\frac{1}{2}\left[(n_j+\kappa_o)\pmb{\mu_j}^T\Sigma_j^{-1}\pmb{\mu_j} + 2(n_j\pmb{\bar{x}} - \kappa_o\pmb{\xi_o})\Sigma_j^{-1}\pmb{\mu_j}\right]\right)\\
+&amp; \propto \exp \left(-\frac{n_j+\kappa_o}{2}\left(\pmb{\mu_j} - \frac{n_j\pmb{\bar{x}} + \kappa_o\pmb{\xi_o}}{n_j + \kappa_o}\right)^T\Sigma_j^{-1}\left(\pmb{\mu_j} - \frac{n_j\pmb{\bar{x}} + \kappa_o\pmb{\xi_o}}{n_j + \kappa_o}\right)\right)\\
+p(\pmb{\mu_j} | \Sigma_j, z, x, \pi) &amp; \sim N\left(\frac{n_j\pmb{\bar{x}} + \kappa_o\pmb{\xi_o}}{n_j + \kappa_o}, \frac{\Sigma_j}{n_j+\kappa_o}\right)
+\end{align*}
+\]</span></p>
+<p>It’s worth noting that mean of the update for <span class="math inline">\(\pmb{\mu_j}\)</span> is a weighted average of the prior mean <span class="math inline">\(\pmb{\xi_o}\)</span> and the sample mean <span class="math inline">\(\pmb{\bar{x}}\)</span>. The less data we have in component <span class="math inline">\(j\)</span> the more weight is put on the prior. We choose our prior such that <span class="math inline">\(\pmb{\xi_o} = \pmb{0}\)</span> and <span class="math inline">\(\kappa_o = 0\)</span> to give the following update function:</p>
+<pre class="python"><code>def update_mu(data, z_mat, cov):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for mu
+    &quot;&quot;&quot;
+    mu = []
+    n_j =  np.sum(z_mat, axis=0)
+    for j in range(len(cov)):
+        cov_o = cov[j] / n_j[j]
+        x_bar = data[z_mat[:,j] == 1, :].mean(axis=0)
+        sample = multivariate_normal(x_bar, cov_o).rvs()
+        mu.append(sample)
+    
+    return mu</code></pre>
+<p>Similarly we can condition on <span class="math inline">\(\Sigma_j\)</span> to get our next complete conditional. Here its helpful to remember the “trace trick” where <span class="math inline">\(\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)\)</span>. We will also let <span class="math inline">\(S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T\)</span> and $G = ( - )( - )^T$</p>
+<p><span class="math display">\[
+\begin{align*}
+p(\Sigma_j | \pmb{\mu_j}, z, x, \pi) &amp; \propto \left|\Sigma_j\right|^{-\frac{n_j+d+v_o}{2}-1}\exp\left(-\frac{1}{2}\text{tr}(\Sigma_j^{-1}S) - \frac{1}{2}\text{tr}(\Lambda_o\Sigma_j^{-1}) - \frac{\kappa_o}{2}\text{tr}(\Sigma_j^{-1}G)\right)\\
+&amp; \propto \left|\Sigma_j\right|^{-\frac{n_j+d+v_o}{2}-1}\exp\left(-\frac{1}{2}\text{tr}\left(\Sigma_j^{-1}\left(\Lambda_o + S + \kappa_o G\right)\right)\right)\\
+p(\Sigma_j | \pmb{\mu_j}, z, x, \pi) &amp; \sim W^{-1}\left(n_j + v_o, \Lambda_o + \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T + \kappa_o(\pmb{\mu_j} - \pmb{\xi_o})(\pmb{\mu_j} - \pmb{\xi_o})^T\right)
+\end{align*}
+\]</span></p>
+<p>Here we choose our prior such that <span class="math inline">\(\Lambda_o = \pmb{I}\)</span> giving the following update function for <span class="math inline">\(\Sigma_j\)</span></p>
+<pre class="python"><code>def update_cov(data, z_mat, mu):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for sigma
+    &quot;&quot;&quot;
+    n_j = np.sum(z_mat, axis=0)
+    cov = []
+    for j in range(len(mu)):
+        y = data[z_mat[:,j] == 1, :]
+        y_bar = y.mean(axis=0)
+        s_squares = np.dot(np.transpose(y - mu[j]), y - mu[j])
+        cov.append(invwishart(n_j[j], s_squares + np.eye(2)).rvs())
+
+    return cov</code></pre>
+</div>
+<div id="fitting-the-model" class="section level2">
+<h2>Fitting the Model</h2>
+<p>The rest of our code is the mostly same as in previous posts. The major differences deal with accounting for the new shapes of data along with our new multivariate distributions.</p>
+<pre class="python"><code>def update_pi(alpha_vec, z_mat):
+    &quot;&quot;&quot;
+    Sample from Posterior Conditional for pi
+    &quot;&quot;&quot;
+    n_j = np.sum(z_mat, axis=0)
+    assert len(n_j) == len(alpha_vec), &quot;Number of distributions must equal number of parameters&quot;
+    return dirichlet(n_j + alpha_vec).rvs()
+
+def update_z(data, mu, cov, pi):
+    &quot;&quot;&quot;
+    Sample from latent variable Z according to likelihoods for class assignment
+    &quot;&quot;&quot;
+    a = np.empty((len(data), len(mu)))
+    out = np.empty((len(data), len(mu)))
+    for j in range(len(mu)):
+        a[:,j] = multivariate_normal(mu[j], cov[j]).pdf(data) * pi[0,j]
+    
+    pi_i = a / np.sum(a, axis=1)[:,None]
+    for i in range(data.shape[0]):
+        out[i,] = multinomial(1, pi_i[i,:])
+    return out
+
+def gibbs(data, iters, burnin, k):
+    &quot;&quot;&quot;
+    Run Gibb&#39;s Sampling for Mixture of k Bivariate Gaussians. Initial States are sampled from Priors
+    &quot;&quot;&quot;
+    # Set initial guesses based on priors
+    alpha = [1,1,1]
+    mu = []
+    cov = []
+    x, y = np.mgrid[-6:8:.1, -6:8:.1]
+    pos = np.dstack((x,y))
+    for i in range(k):
+        mu.append(multivariate_normal(np.zeros(2), np.eye(2)).rvs())
+        cov.append(invwishart(2, np.eye(2)).rvs())
+
+    pi = dirichlet(alpha).rvs()
+    pi_out = np.empty((iters, k))
+    mu_out = np.empty((iters, k, 2)) # Bivariate
+    cov_out = np.empty((iters, k, 2, 2)) # Bivariate
+    for i in range(iters):
+        # Update Parameters according to conditional posterior distributions
+        z_mat = update_z(data, mu, cov, pi)
+        pi = update_pi(alpha, z_mat)
+        cov = update_cov(data, z_mat, mu)
+        mu = update_mu(data, z_mat, cov)
+        # Store Values to monitor trace
+        pi_out[i, :] = pi
+        for j in range(k):
+            mu_out[i, j :] = mu[j]
+            cov_out[i, j, :, :] = cov[j]
+    
+    return pi_out[burnin:, :], mu_out[burnin:,:,:], cov_out[burnin:,:,:,:], z_mat
+
+pi, mu, cov, z_mat = gibbs(data, 2000, 500, 3)
+mu_fitted = mu.mean(axis = 0)
+pi_fitted = pi.mean(axis = 0)
+cov_fitted = cov.mean(axis = 0)
+
+x, y = np.mgrid[-6:8:.1, -6:8:.1]
+pos = np.dstack((x,y))
+fig, ax = plt.subplots()
+cols = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]
+for j, col in enumerate(cols):
+    ax.scatter(data[z_mat[:,j] == 1,0], data[z_mat[:,j] == 1,1], alpha = .4, color = col)
+for i in range(3):
+    ax.contour(x,y, 
+        multivariate_normal(mu_fitted[i,:], 
+        cov_fitted[i,:,:]).pdf(pos), 
+        extend=&#39;both&#39;)</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x12ee38c10&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x12ee38e20&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x12ee38f10&gt;</code></pre>
+<pre class="python"><code>fig.suptitle(&quot;K=3 Fitted Bivariate Gaussian Distributions Data&quot;)
+ax.grid()
+fig.savefig(&quot;fitted.png&quot;)</code></pre>
+<p><img src="fitted.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+<p>We can see above that our model fits the bivariate mixture very well. Because we have so many different parameters, I will skip over the trace plots which show convergence.</p>
+</div>
+</div>
+        <div class="post-footer">
+            <div class="info">
+                
+                
+            </div>
+        </div>
+
+        
+    </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript"
+        src="/js/medium-zoom.min.2d6fd0be87fa98f0c9b4dc2536b312bbca48757f584f6ea1f394abc9bcc38fbc.js"
+        integrity="sha256-LW/Qvof6mPDJtNwlNrMSu8pIdX9YT26h85SrybzDj7w="
+        crossorigin="anonymous"></script><link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.css"
+              integrity="sha384-t5CR&#43;zwDAROtph0PXGte6ia8heboACF9R5l/DiY&#43;WZ3P2lxNgvJkQk5n7GPvLMYw"
+              crossorigin="anonymous"><script defer
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js"
+                integrity="sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8&#43;w2LAIftJEULZABrF9PPFv&#43;tVkH"
+                crossorigin="anonymous"></script><script defer
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/contrib/auto-render.min.js"
+                integrity="sha384-bHBqxz8fokvgoJ/sc17HODNxa42TlaEhB&#43;w8ZJXTc2nZf1VgEaFZeZvT4Mznfz0v"
+                crossorigin="anonymous"
+                onload="renderMathInElement(document.body);"></script></body>
+
+</html>
