@@ -11,9 +11,11 @@ Categories: []
 DisableComments: no
 ---
 
-## Extending to Infinite Components
+### Dirichlet Processes
 
-After working with mixture models, it's natural to wonder how one should best determine the correct number of components to include in our models. One method for determining this is to extend our finite mixture model to the case of infinite components. Infinite components is going to require an infinite probability vector $\pi$ and typically when thinking about a Dirichlet Distribution, we have $K << N$. Now we might ask ourselves what happens when $K>>N$? We know that the number of unique groups in our sample $K^*$ will be less than $N$. To see what this may look like, we can generate $\pi \sim Dir\left(\frac{\alpha}{K}, ...\right)$ and then sample $Z \sim cat(\pi)$ with an arbitrarily large $K$ for increasing values of $N$.
+A Dirichlet Process is best described as a stochastic process used in bayesian non-parametric modeling. Each draw from a DP is itself a distribution, making it a distribution over distributions. The DP derives it's name from the fact that the marginal distributions of a DP is a finite dimensional Dirichlet Distribution just as a Gaussian Process has a finite dimensional Gaussian distributed marginal distribution. The DP has an infinite number of parameters which places it in the family of non-parametric.
+
+To motivate our exploration of DP's, we can imagine a situation where we would like to extend our finite mixture model to the case of infinite components. Infinite components is going to require an infinite probability vector $\pi$ and typically when thinking about a Dirichlet Distribution (not to be confused with a Dirichlet Process), we have $K << N$. Now we might ask ourselves what happens when $K>>N$? We know that the number of unique groups in our sample $K^*$ will be less than $N$. To see what this may look like, we can generate $\pi \sim Dir\left(\frac{\alpha}{K}, ...\right)$ and then sample $Z \sim cat(\pi)$ with an arbitrarily large $K$ for increasing values of $N$.
 
 ```{r setup, include=FALSE}
 library(knitr)  
@@ -62,7 +64,7 @@ knitr::include_graphics("num_clusters.png")
 
 ```
 
-It's rather obvious to see that the number of clusters grows logarithmic in $\alpha$, and we can actually plot the expected value in red as:
+Interesting! It seems that the number of clusters grows logarithmic in $\alpha$, and it turns out that we can solve for and plot the expected value in red:
 
 $$
 \begin{align}
@@ -70,7 +72,39 @@ $$
 \end{align}
 $$
 
-So this helps us understand how the Dirichlet Distribution could work with large $K$ and givens us confidence that the distribution is well behaved as $K$ gets large, but what about when $K\to\infty$? \#\#\# Stick Breaking
+We can also note the apparent stability in the probability mass at our first few clusters, even as $N$ grows. This helps us understand how the Dirichlet Distribution could work with large $K$ and gives us confidence that the distribution is well behaved as $K$ gets large, but our original question was what happens when $K\to\infty$? Our intuition should lead us to believe that as $K\to\infty$ the probability mass is still concentrated around the first few clusters but this is because we are sampling categorically from the probability vector $\pi$. If we generalize this to any distribution $\mathcal{H}$, we will arrive at the formal definition of a Dirichlet Process.
+
+$$
+\begin{align*}
+\pi |\alpha & \sim \lim_{k \to \infty} Dir\left(\frac{\alpha_1}{k}, ..., \frac{\alpha_k}{k}\right)
+\end{align*}
+$$
+
+For each $\pi$ in this distribution we associate a draw from the base measure $\mathcal{H}$:
+
+$$
+\begin{align*}
+\theta_k & \sim \mathcal{H} \;\;\;\;\;\;\;\;\; \forall \;\;k \in \left[1, \infty\right]
+\end{align*}
+$$
+
+Then we define: $$
+\begin{align*}
+G \doteq \sum_{k=1}^{\infty}\pi_k \delta\left(\theta_k\right)
+\end{align*}
+$$
+
+and conclude that:
+
+$$
+\begin{align*}
+G \sim DP\left(\alpha, \mathcal{H} \right)
+\end{align*}
+$$
+
+where $G$ is a discrete distribution over the continuous space $\Omega$
+
+### Stick Breaking
 
 One common way to define the Dirichlet Process is by using the popular "stick breaking" construction. Formally, Let $(\phi_1,\phi_2, ...)$ be a sequence of independent random variables distributed $Beta(1, \alpha)$. Independent of this sequence let $(Z_1, Z_2, ...)$ be a sequence of random variables with base distribution $H$, where above we used $H \sim cat(\pi)$. If we define $p_1 = \phi_1$ and $p_i = \phi_i\prod_{j<i}(1-\phi_j)$, then the random measure $P = \sum_{i\in \mathbb{N}}p_i\delta(Z_i)$ is a Dirichlet Process with concentration parameter $\alpha$ and base measure $H$. The nice thing about this formulation is that we can take finite samples from an infinite dimensional Dirichlet distribution by following this process.
 
@@ -111,7 +145,3 @@ plt.close(fig)
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("stick_breaking.png")
 ```
-
-### Dirichlet Processes
-
-A Dirichlet Process is best described as a stochastic process used in bayesian non-parametric modeling, and more specifically in Dirichlet Process Mixture Models (Infinite Mixture Models). Each draw from a DP is itself a distribution, making it a distribution over distributions. The DP derives it's name from the fact that the marginal distributions of a DP is a finite dimensional Dirichlet Distribution just as a Gaussian Process has a finite dimensional Gaussian distributed marginal distribution. The DP has an infinite number of parameters which places it in the family of non-parametric.
