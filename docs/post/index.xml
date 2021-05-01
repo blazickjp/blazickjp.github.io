@@ -13,7 +13,8 @@
       <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
       
       <guid>http://blazickjp.github.io/post/2021-04-03-dirichlet-processes/</guid>
-      <description>Extending to Infinite Components After working with mixture models, it’s natural to wonder how one should best determine the correct number of components to include in our models. One method for determining this is to extend our finite mixture model to the case of infinite components. Infinite components is going to require an infinite probability vector \(\pi\) and typically when thinking about a Dirichlet Distribution, we have \(K &amp;lt;&amp;lt; N\). Now we might ask ourselves what happens when \(K&amp;gt;&amp;gt;N\)? We know that the number of unique groups in our sample \(K^*\) will be less than \(N\). To see what this may look like, we can generate \(\pi \sim Dir\left(\frac{\alpha}{K}, .</description>
+      <description>Dirichlet Processes A Dirichlet Process is best described as a stochastic process used in bayesian non-parametric modeling. Each draw from a DP is itself a distribution, making it a distribution over distributions. The DP derives it’s name from the fact that the marginal distributions of a DP is a finite dimensional Dirichlet Distribution just as a Gaussian Process has a finite dimensional Gaussian distributed marginal distribution. The DP has an infinite number of parameters which places it in the family of non-parametric.
+To motivate our exploration of DP’s, we can imagine a situation where we would like to extend our finite mixture model to the case of infinite components.</description>
     </item>
     
     <item>

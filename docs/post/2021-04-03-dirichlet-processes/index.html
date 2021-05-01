@@ -63,7 +63,8 @@
 <meta name="twitter:image" content="http://blazickjp.github.io/105"/>
 
 <meta name="twitter:title" content="Dirichlet Processes"/>
-<meta name="twitter:description" content="Extending to Infinite Components After working with mixture models, it’s natural to wonder how one should best determine the correct number of components to include in our models. One method for determining this is to extend our finite mixture model to the case of infinite components. Infinite components is going to require an infinite probability vector \(\pi\) and typically when thinking about a Dirichlet Distribution, we have \(K &lt;&lt; N\). Now we might ask ourselves what happens when \(K&gt;&gt;N\)? We know that the number of unique groups in our sample \(K^*\) will be less than \(N\). To see what this may look like, we can generate \(\pi \sim Dir\left(\frac{\alpha}{K}, ."/>
+<meta name="twitter:description" content="Dirichlet Processes A Dirichlet Process is best described as a stochastic process used in bayesian non-parametric modeling. Each draw from a DP is itself a distribution, making it a distribution over distributions. The DP derives it’s name from the fact that the marginal distributions of a DP is a finite dimensional Dirichlet Distribution just as a Gaussian Process has a finite dimensional Gaussian distributed marginal distribution. The DP has an infinite number of parameters which places it in the family of non-parametric.
+To motivate our exploration of DP’s, we can imagine a situation where we would like to extend our finite mixture model to the case of infinite components."/>
 
 
     
@@ -161,7 +162,7 @@
                         <span class="date"> Sat, Apr 3, 2021 
                                            </span>
                         <em class="fas fa-stopwatch"></em>
-                        <span class="reading-time">3-minute read</span>
+                        <span class="reading-time">4-minute read</span>
                     </div>
                 
             </div>
@@ -170,9 +171,10 @@
 <script src="http://blazickjp.github.io/post/2021-04-03-dirichlet-processes/index.en_files/header-attrs/header-attrs.js"></script>
 
 
-<div id="extending-to-infinite-components" class="section level2">
-<h2>Extending to Infinite Components</h2>
-<p>After working with mixture models, it’s natural to wonder how one should best determine the correct number of components to include in our models. One method for determining this is to extend our finite mixture model to the case of infinite components. Infinite components is going to require an infinite probability vector <span class="math inline">\(\pi\)</span> and typically when thinking about a Dirichlet Distribution, we have <span class="math inline">\(K &lt;&lt; N\)</span>. Now we might ask ourselves what happens when <span class="math inline">\(K&gt;&gt;N\)</span>? We know that the number of unique groups in our sample <span class="math inline">\(K^*\)</span> will be less than <span class="math inline">\(N\)</span>. To see what this may look like, we can generate <span class="math inline">\(\pi \sim Dir\left(\frac{\alpha}{K}, ...\right)\)</span> and then sample <span class="math inline">\(Z \sim cat(\pi)\)</span> with an arbitrarily large <span class="math inline">\(K\)</span> for increasing values of <span class="math inline">\(N\)</span>.</p>
+<div id="dirichlet-processes" class="section level3">
+<h3>Dirichlet Processes</h3>
+<p>A Dirichlet Process is best described as a stochastic process used in bayesian non-parametric modeling. Each draw from a DP is itself a distribution, making it a distribution over distributions. The DP derives it’s name from the fact that the marginal distributions of a DP is a finite dimensional Dirichlet Distribution just as a Gaussian Process has a finite dimensional Gaussian distributed marginal distribution. The DP has an infinite number of parameters which places it in the family of non-parametric.</p>
+<p>To motivate our exploration of DP’s, we can imagine a situation where we would like to extend our finite mixture model to the case of infinite components. Infinite components is going to require an infinite probability vector <span class="math inline">\(\pi\)</span> and typically when thinking about a Dirichlet Distribution (not to be confused with a Dirichlet Process), we have <span class="math inline">\(K &lt;&lt; N\)</span>. Now we might ask ourselves what happens when <span class="math inline">\(K&gt;&gt;N\)</span>? We know that the number of unique groups in our sample <span class="math inline">\(K^*\)</span> will be less than <span class="math inline">\(N\)</span>. To see what this may look like, we can generate <span class="math inline">\(\pi \sim Dir\left(\frac{\alpha}{K}, ...\right)\)</span> and then sample <span class="math inline">\(Z \sim cat(\pi)\)</span> with an arbitrarily large <span class="math inline">\(K\)</span> for increasing values of <span class="math inline">\(N\)</span>.</p>
 <pre class="python"><code>import numpy as np
 import pandas as pd
 import scipy as sp
@@ -208,13 +210,39 @@ plt.ylabel(&quot;Number Unique Clusters&quot;)
 fig.savefig(&quot;num_clusters.png&quot;)
 plt.close(fig)</code></pre>
 <p><img src="num_clusters.png" width="350" style="display: block; margin: auto;" /></p>
-<p>It’s rather obvious to see that the number of clusters grows logarithmic in <span class="math inline">\(\alpha\)</span>, and we can actually plot the expected value in red as:</p>
+<p>Interesting! It seems that the number of clusters grows logarithmic in <span class="math inline">\(\alpha\)</span>, and it turns out that we can solve for and plot the expected value in red:</p>
 <p><span class="math display">\[
 \begin{align}
 \mathbb{E}\left[K^*\right|\alpha] &amp; = \alpha \log\left(1 + \frac{n}{\alpha}\right)
 \end{align}
 \]</span></p>
-<p>So this helps us understand how the Dirichlet Distribution could work with large <span class="math inline">\(K\)</span> and givens us confidence that the distribution is well behaved as <span class="math inline">\(K\)</span> gets large, but what about when <span class="math inline">\(K\to\infty\)</span>? ### Stick Breaking</p>
+<p>We can also note the apparent stability in the probability mass at our first few clusters, even as <span class="math inline">\(N\)</span> grows. This helps us understand how the Dirichlet Distribution could work with large <span class="math inline">\(K\)</span> and gives us confidence that the distribution is well behaved as <span class="math inline">\(K\)</span> gets large, but our original question was what happens when <span class="math inline">\(K\to\infty\)</span>? Our intuition should lead us to believe that as <span class="math inline">\(K\to\infty\)</span> the probability mass is still concentrated around the first few clusters but this is because we are sampling categorically from the probability vector <span class="math inline">\(\pi\)</span>. If we generalize this to any distribution <span class="math inline">\(\mathcal{H}\)</span>, we will arrive at the formal definition of a Dirichlet Process.</p>
+<p><span class="math display">\[
+\begin{align*}
+\pi |\alpha &amp; \sim \lim_{k \to \infty} Dir\left(\frac{\alpha_1}{k}, ..., \frac{\alpha_k}{k}\right)
+\end{align*}
+\]</span></p>
+<p>For each <span class="math inline">\(\pi\)</span> in this distribution we associate a draw from the base measure <span class="math inline">\(\mathcal{H}\)</span>:</p>
+<p><span class="math display">\[
+\begin{align*}
+\theta_k &amp; \sim \mathcal{H} \;\;\;\;\;\;\;\;\; \forall \;\;k \in \left[1, \infty\right]
+\end{align*}
+\]</span></p>
+<p>Then we define: <span class="math display">\[
+\begin{align*}
+G \doteq \sum_{k=1}^{\infty}\pi_k \delta\left(\theta_k\right)
+\end{align*}
+\]</span></p>
+<p>and conclude that:</p>
+<p><span class="math display">\[
+\begin{align*}
+G \sim DP\left(\alpha, \mathcal{H} \right)
+\end{align*}
+\]</span></p>
+<p>where <span class="math inline">\(G\)</span> is a discrete distribution over the continuous space <span class="math inline">\(\Omega\)</span></p>
+</div>
+<div id="stick-breaking" class="section level3">
+<h3>Stick Breaking</h3>
 <p>One common way to define the Dirichlet Process is by using the popular “stick breaking” construction. Formally, Let <span class="math inline">\((\phi_1,\phi_2, ...)\)</span> be a sequence of independent random variables distributed <span class="math inline">\(Beta(1, \alpha)\)</span>. Independent of this sequence let <span class="math inline">\((Z_1, Z_2, ...)\)</span> be a sequence of random variables with base distribution <span class="math inline">\(H\)</span>, where above we used <span class="math inline">\(H \sim cat(\pi)\)</span>. If we define <span class="math inline">\(p_1 = \phi_1\)</span> and <span class="math inline">\(p_i = \phi_i\prod_{j&lt;i}(1-\phi_j)\)</span>, then the random measure <span class="math inline">\(P = \sum_{i\in \mathbb{N}}p_i\delta(Z_i)\)</span> is a Dirichlet Process with concentration parameter <span class="math inline">\(\alpha\)</span> and base measure <span class="math inline">\(H\)</span>. The nice thing about this formulation is that we can take finite samples from an infinite dimensional Dirichlet distribution by following this process.</p>
 <p>To see this, we can generate samples using the stick-breaking method and verify that they are visually similar to those we generated using the Dirichlet Distribution for large values of <span class="math inline">\(K\)</span>.</p>
 <pre class="python"><code>def stick_breaking(N, alpha):
@@ -247,10 +275,6 @@ plt.ylabel(&quot;Class Assignment&quot;)
 fig.savefig(&quot;stick_breaking.png&quot;)
 plt.close(fig)</code></pre>
 <p><img src="stick_breaking.png" width="350" style="display: block; margin: auto;" /></p>
-<div id="dirichlet-processes" class="section level3">
-<h3>Dirichlet Processes</h3>
-<p>A Dirichlet Process is best described as a stochastic process used in bayesian non-parametric modeling, and more specifically in Dirichlet Process Mixture Models (Infinite Mixture Models). Each draw from a DP is itself a distribution, making it a distribution over distributions. The DP derives it’s name from the fact that the marginal distributions of a DP is a finite dimensional Dirichlet Distribution just as a Gaussian Process has a finite dimensional Gaussian distributed marginal distribution. The DP has an infinite number of parameters which places it in the family of non-parametric.</p>
-</div>
 </div>
 </div>
         <div class="post-footer">
