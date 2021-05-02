@@ -85,7 +85,7 @@ For each $\pi$ in this distribution we associate a draw from the base measure $\
 
 $$
 \begin{align*}
-\theta_k & \sim \mathcal{H} \;\;\;\;\;\;\;\;\; \forall \;\;k \in \left[1, \infty\right]
+\theta_k & \sim \mathcal{H} \;\;\;\;\;\;\;\;\; \forall \;\;k \in \mathbb{N}
 \end{align*}
 $$
 
