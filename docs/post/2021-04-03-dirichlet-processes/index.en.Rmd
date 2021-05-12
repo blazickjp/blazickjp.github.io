@@ -185,7 +185,7 @@ plt.close(fig)
 knitr::include_graphics("crp.png")
 ```
 
-fdsasadf
+
 
 
 

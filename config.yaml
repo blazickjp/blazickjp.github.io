@@ -14,10 +14,10 @@ params:
   author: Joseph Blazick
   customCss: []
   customJs: []
-  description: Call me Joe
-  doNotLoadAnimations: false
+  description: Data Science and Optimization Manager at Lucas Systems Inc.
+  doNotLoadAnimations: falses
   favicon: favicons/
-  images: images/site-feature-image.png
+  images: images/joe2.png
   keywords: ''
   mainSections: post
   math:
@@ -34,7 +34,7 @@ params:
     - icon: fas fa-envelope
       title: e-mail
       url: mailto:joe.blazick@yahoo.com
-  title: I'm Joseph Blazick
+  title: Joseph Blazick
 menu:
   main:
     - identifier: home
