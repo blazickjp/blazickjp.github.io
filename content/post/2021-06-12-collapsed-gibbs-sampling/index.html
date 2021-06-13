@@ -20,10 +20,10 @@ DisableComments: no
 </div>
 <div id="collapsed-gibbs" class="section level1">
 <h1>Collapsed Gibbs</h1>
-<p>Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required. Looking back at our GMM from other posts, we know that we chose <span class="math inline">\(p(\pi|\alpha)\)</span> and <span class="math inline">\(p(\mu,\Sigma| \beta)\)</span> to be conjugate so we are actually able to integrate them out and only sample from <span class="math inline">\(p(z|z_{\not i},\beta,\alpha)\)</span>. Kamper (2013) shows that:
+<p>Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required. Looking back at our GMM from other posts, we know that we chose <span class="math inline">\(p(\pi|\alpha)\)</span> and <span class="math inline">\(p(\mu,\Sigma| \beta)\)</span> to be conjugate so we are actually able to integrate them out and only sample from <span class="math inline">\(p(z|z_{\neg i},\beta,\alpha)\)</span>. Kamper (2013) shows that:
 <span class="math display">\[
 \begin{align*}
-p(z_i=k|z_{\not i},\mathcal{D},\beta,\alpha) &amp; \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\not i},z_i = k,z_{\not i}\beta)
+p(z_i=k|z_{\neg i},\mathcal{D},\beta,\alpha) &amp; \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)
 \end{align*}
 \]</span>
 Focusing on the first term we can start by integrating out <span class="math inline">\(\pi\)</span>:</p>
@@ -43,23 +43,23 @@ p(z|\alpha) &amp; = \frac{\Gamma(\alpha)}{\Gamma(N+\alpha)}\prod_{k=1}^K\frac{\G
 Now we can work to get this in the form that we want, which is as follows:
 <span class="math display">\[
 \begin{align*}
-p(z_i =k | z_{\not i}, \alpha) &amp; = \frac{p(z_i =k, z_{\not i} | \alpha)}{p(z_{\not i}| \alpha)}\\
-&amp; = \frac{p(z_i = k | \alpha)}{p(z_{\not i}| \alpha)}\\
-&amp; = \frac{N_{k \not i} + \frac{\alpha}{k}}{N+\alpha - 1}
+p(z_i =k | z_{\neg i}, \alpha) &amp; = \frac{p(z_i =k, z_{\neg i} | \alpha)}{p(z_{\neg i}| \alpha)}\\
+&amp; = \frac{p(z_i = k | \alpha)}{p(z_{\neg i}| \alpha)}\\
+&amp; = \frac{N_{k \neg i} + \frac{\alpha}{k}}{N+\alpha - 1}
 \end{align*}
 \]</span>
-Next we can turn our attention to <span class="math inline">\(p(x_i|\mathcal{D}_{\not i},z_i = k,z_{\not i}\beta)\)</span> where <span class="math inline">\(\beta\)</span> represents the parameters to the Normal Inverse Wishart distribution. Using [1, p.843] we get:</p>
+Next we can turn our attention to <span class="math inline">\(p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)\)</span> where <span class="math inline">\(\beta\)</span> represents the parameters to the Normal Inverse Wishart distribution. Using [1, p.843] we get:</p>
 <p><span class="math display">\[
 \begin{align*}
-p(x_i|\mathcal{D}_{k\not i},z_i = k,z_{\not i}\beta) &amp; = p(x_i|\mathcal{D}_{k\not i},\beta)\\
-&amp; = \frac{p(x_i,\mathcal{D}_{k\not i}|\beta)}{p(\mathcal{D}_{k\not i}|\beta)}\\
-&amp; = \frac{p(\mathcal{D}_{k}|\beta)}{p(\mathcal{D}_{k\not i}|\beta)}
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) &amp; = p(x_i|\mathcal{D}_{k\neg i},\beta)\\
+&amp; = \frac{p(x_i,\mathcal{D}_{k\neg i}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}\\
+&amp; = \frac{p(\mathcal{D}_{k}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}
 \end{align*}
 \]</span></p>
 <p>Which is equivalent to the posterior predictive distribution given by:</p>
 <p><span class="math display">\[
 \begin{align*}
-p(x_i|\mathcal{D}_{k\not i},z_i = k,z_{\not i}\beta) &amp; = \mathcal{T}(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1)
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) &amp; = \mathcal{T}(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1)
 \end{align*}
 \]</span>
 Now let’s use the same data as from prior posts and solve the finite GMM case when <span class="math inline">\(k=3\)</span>.</p>
@@ -103,9 +103,9 @@ ax.scatter(data[:,0], data[:,1], alpha = .6)
 for i in range(3):
     ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)
 </code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7f9883638580&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7f988379f5e0&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7f9883781df0&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7f8e3e679580&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7f8e3e7df5e0&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7f8e3e7c2df0&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 GMM&quot;)
 ax.grid()
 fig.savefig(&quot;data_plot.png&quot;)
@@ -149,12 +149,12 @@ for i, v in enumerate(cols):
     ax.scatter(d2[:,0], d2[:,1], color=v, alpha = .6)
     ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)
 </code></pre>
-<pre><code>## &lt;matplotlib.collections.PathCollection object at 0x7f988585d700&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7f988585dc40&gt;
-## &lt;matplotlib.collections.PathCollection object at 0x7f988585da90&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7f988585db50&gt;
-## &lt;matplotlib.collections.PathCollection object at 0x7f988586e7c0&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7f988585d6a0&gt;</code></pre>
+<pre><code>## &lt;matplotlib.collections.PathCollection object at 0x7f8e3efd2280&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7f8e3efd2d60&gt;
+## &lt;matplotlib.collections.PathCollection object at 0x7f8e3efd2bb0&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7f8e3efd2c70&gt;
+## &lt;matplotlib.collections.PathCollection object at 0x7f8e3efe1a60&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7f8e3efd2220&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;Collapsed Gibbs for Finite GMM&quot;)
 ax.grid()
 fig.savefig(&quot;collapsed_gibbs.png&quot;)

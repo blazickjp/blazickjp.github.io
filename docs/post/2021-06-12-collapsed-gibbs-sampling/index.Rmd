@@ -17,10 +17,10 @@ In this post I'm going to discuss collapsed gibbs sampling and how we can apply 
 
 # Collapsed Gibbs
 
-Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required. Looking back at our GMM from other posts, we know that we chose $p(\pi|\alpha)$ and $p(\mu,\Sigma| \beta)$ to be conjugate so we are actually able to integrate them out and only sample from $p(z|z_{\not i},\beta,\alpha)$. Kamper (2013) shows that:
+Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required. Looking back at our GMM from other posts, we know that we chose $p(\pi|\alpha)$ and $p(\mu,\Sigma| \beta)$ to be conjugate so we are actually able to integrate them out and only sample from $p(z|z_{\neg i},\beta,\alpha)$. Kamper (2013) shows that:
 $$
 \begin{align*}
-p(z_i=k|z_{\not i},\mathcal{D},\beta,\alpha) & \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\not i},z_i = k,z_{\not i}\beta)
+p(z_i=k|z_{\neg i},\mathcal{D},\beta,\alpha) & \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)
 \end{align*}
 $$
 Focusing on the first term we can start by integrating out $\pi$:
@@ -42,18 +42,18 @@ $$
 Now we can work to get this in the form that we want, which is as follows:
 $$
 \begin{align*}
-p(z_i =k | z_{\not i}, \alpha) & = \frac{p(z_i =k, z_{\not i} | \alpha)}{p(z_{\not i}| \alpha)}\\
-& = \frac{p(z_i = k | \alpha)}{p(z_{\not i}| \alpha)}\\
-& = \frac{N_{k \not i} + \frac{\alpha}{k}}{N+\alpha - 1}
+p(z_i =k | z_{\neg i}, \alpha) & = \frac{p(z_i =k, z_{\neg i} | \alpha)}{p(z_{\neg i}| \alpha)}\\
+& = \frac{p(z_i = k | \alpha)}{p(z_{\neg i}| \alpha)}\\
+& = \frac{N_{k \neg i} + \frac{\alpha}{k}}{N+\alpha - 1}
 \end{align*}
 $$
-Next we can turn our attention to $p(x_i|\mathcal{D}_{\not i},z_i = k,z_{\not i}\beta)$ where $\beta$ represents the parameters to the Normal Inverse Wishart distribution. Using [1, p.843] we get:
+Next we can turn our attention to $p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)$ where $\beta$ represents the parameters to the Normal Inverse Wishart distribution. Using [1, p.843] we get:
 
 $$
 \begin{align*}
-p(x_i|\mathcal{D}_{k\not i},z_i = k,z_{\not i}\beta) & = p(x_i|\mathcal{D}_{k\not i},\beta)\\
-& = \frac{p(x_i,\mathcal{D}_{k\not i}|\beta)}{p(\mathcal{D}_{k\not i}|\beta)}\\
-& = \frac{p(\mathcal{D}_{k}|\beta)}{p(\mathcal{D}_{k\not i}|\beta)}
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = p(x_i|\mathcal{D}_{k\neg i},\beta)\\
+& = \frac{p(x_i,\mathcal{D}_{k\neg i}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}\\
+& = \frac{p(\mathcal{D}_{k}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}
 \end{align*}
 $$
 
@@ -61,7 +61,7 @@ Which is equivalent to the posterior predictive distribution given by:
 
 $$
 \begin{align*}
-p(x_i|\mathcal{D}_{k\not i},z_i = k,z_{\not i}\beta) & = \mathcal{T}(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1)
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = \mathcal{T}(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1)
 \end{align*}
 $$
 Now let's use the same data as from prior posts and solve the finite GMM case when $k=3$.
