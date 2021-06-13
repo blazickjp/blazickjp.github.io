@@ -1,0 +1,119 @@
+---
+title: Collapsed Gibbs Sampling and DPGMM
+author: 'Josepg Blazick'
+date: '2021-06-12'
+slug: []
+categories: []
+tags: []
+Description: ''
+Tags: []
+Categories: []
+DisableComments: no
+---
+
+## Introduction
+
+In this post I'm going to discuss collapsed gibbs sampling and how we can apply it to our gaussian mixture model to model an Infinite Gaussian Mixture Model, aslo known as the Dirichlet Process Gaussian Mixture Model or DPGMM. The name is derived because we place a Dirichlet Process prior on the number of components allowing the number of components to be derived from the data instead of relying on the user to guess the correct number of components. 
+
+# Collapsed Gibbs
+
+Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required. Looking back at our GMM from other posts, we know that we chose $p(\pi|\alpha)$ and $p(\mu,\Sigma| \beta)$ to be conjugate so we are actually able to integrate them out and only sample from $p(z|z_{\not i},\beta,\alpha)$. Kamper (2013) shows that:
+$$
+\begin{align*}
+p(z_i=k|z_{\not i},\mathcal{D},\beta,\alpha) & \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\not i},z_i = k,z_{\not i}\beta)
+\end{align*}
+$$
+Focusing on the first term we can start by integrating out $\pi$:
+
+$$
+\begin{align*}
+p(z|\alpha) & = \int_{\pi}p(z|\pi)p(\pi|\alpha)d\pi\\
+& = \int_{\pi}\prod_{k=1}^K\pi_k^{N_k}\frac{1}{B(\alpha)}\prod_{k=1}^Kx_k^{\alpha_k -1}d\pi\\
+& = \frac{1}{B(\alpha)}\int_{\pi}\prod_{k=1}^K\pi_k^{N_k+\alpha_k -1}d\pi\\
+\end{align*}
+$$
+Here we recognize that the integral of the 2nd term is the inverse of the normalizing constand from the Dirichlet distribution. This trick is why we are allowed to integrate out these parameters and we will reuse this trick when dealing with $\mu$ and $\Sigma$. Therefore,
+
+$$
+\begin{align*}
+p(z|\alpha) & = \frac{\Gamma(\alpha)}{\Gamma(N+\alpha)}\prod_{k=1}^K\frac{\Gamma\left(N_K + \frac{\alpha}{k}\right)}{\Gamma\left(\frac{\alpha}{k}\right)}
+\end{align*}
+$$
+Now we can work to get this in the form that we want, which is as follows:
+$$
+\begin{align*}
+p(z_i =k | z_{\not i}, \alpha) & = \frac{p(z_i =k, z_{\not i} | \alpha)}{p(z_{\not i}| \alpha)}\\
+& = \frac{p(z_i = k | \alpha)}{p(z_{\not i}| \alpha)}\\
+& = \frac{N_{k \not i} + \frac{\alpha}{k}}{N+\alpha - 1}
+\end{align*}
+$$
+Next we can turn our attention to $p(x_i|\mathcal{D}_{\not i},z_i = k,z_{\not i}\beta)$ where $\beta$ represents the parameters to the Normal Inverse Wishart distribution. Using [1, p.843] we get:
+
+$$
+\begin{align*}
+p(x_i|\mathcal{D}_{k\not i},z_i = k,z_{\not i}\beta) & = p(x_i|\mathcal{D}_{k\not i},\beta)\\
+& = \frac{p(x_i,\mathcal{D}_{k\not i}|\beta)}{p(\mathcal{D}_{k\not i}|\beta)}\\
+& = \frac{p(\mathcal{D}_{k}|\beta)}{p(\mathcal{D}_{k\not i}|\beta)}
+\end{align*}
+$$
+
+Which is equivalent to the posterior predictive distribution given by:
+
+$$
+\begin{align*}
+p(x_i|\mathcal{D}_{k\not i},z_i = k,z_{\not i}\beta) & = \mathcal{T}(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1)
+\end{align*}
+$$
+Now let's use the same data as from prior posts and solve the finite GMM case when $k=3$.
+
+```{python,}
+import numpy as np
+from numpy.random import multinomial
+from scipy.stats import dirichlet, multivariate_t, multivariate_normal
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+import pandas as pd
+
+# Define parameters for K=3 Mixture of Multivariate Gaussians
+phi = [.3, .5, .2]
+mu = np.array([[13,5], [0,-2], [-14,3]])
+cov_1 = np.array([[2.0, 0.3], [0.3, 0.5]])
+cov_2 = np.array([[3.0,.4], [.4,3.0]])    
+cov_3 = np.array([[1.7,-.7], [-.7,1.7]])
+cov = np.stack((cov_1, cov_2, cov_3), axis = 0)
+
+def data_gen(mu, cov, phi, n):
+    """
+    Generates samples from Mixture of K Multivariate Gaussian Distributions
+    """
+    y = np.empty((n, 2))
+    z = []
+    for i in range(n):
+        ind = multinomial(1, phi)
+        for j, val in enumerate(ind):
+            if val == 1:
+                z.append(j)
+                y[i,:] = np.random.multivariate_normal(mu[j,:], cov[j,:,:])
+            else:
+                next
+    return np.array(y), z
+  
+data, z = data_gen(mu, cov, phi, 500)
+x, y = np.mgrid[-17:17.5:.1, -7:7.5:.1]
+pos = np.dstack((x,y))
+
+fig, ax = plt.subplots()
+ax.scatter(data[:,0], data[:,1], alpha = .6)
+for i in range(3):
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both')
+
+
+fig.suptitle("K=3 GMM")
+ax.grid()
+fig.savefig("data_plot.png")
+plt.close(fig)
+```
+
+```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
+knitr::include_graphics("data_plot.png")
+```
