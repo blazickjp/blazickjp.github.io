@@ -64,6 +64,10 @@ $$
 p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = \mathcal{T}\left(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1\right)
 \end{align*}
 $$
+Now that we have everything that we need, we can formally write out the collapsed gibbs algorithm as follows:
+
+
+
 Now let's use the same data as from prior posts and solve the finite GMM case when $k=3$.
 
 ```{python,}
@@ -103,9 +107,9 @@ x, y = np.mgrid[-17:17.5:.1, -7:7.5:.1]
 pos = np.dstack((x,y))
 
 fig, ax = plt.subplots()
-ax.scatter(data[:,0], data[:,1], alpha = .6)
+ax.scatter(data[:,0], data[:,1], alpha = .6);
 for i in range(3):
-    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both')
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both');
 
 
 fig.suptitle("K=3 GMM")
@@ -155,8 +159,8 @@ fig, ax = plt.subplots()
 cols = ["red", "blue", "green"]
 for i, v in enumerate(cols):
     d2 = data[np.array(z_pred) == i,:]
-    ax.scatter(d2[:,0], d2[:,1], color=v, alpha = .6)
-    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both')
+    ax.scatter(d2[:,0], d2[:,1], color=v, alpha = .6);
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both');
 
 
 fig.suptitle("Collapsed Gibbs for Finite GMM")
@@ -168,3 +172,4 @@ plt.close(fig)
 ```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
 knitr::include_graphics("collapsed_gibbs.png")
 ```
+
