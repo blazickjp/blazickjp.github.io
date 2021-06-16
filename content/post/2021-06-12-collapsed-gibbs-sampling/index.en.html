@@ -1,0 +1,163 @@
+---
+title: Collapsed Gibbs Sampling and DPGMM
+author: 'Josepg Blazick'
+date: '2021-06-12'
+slug: []
+categories: []
+tags: []
+Description: ''
+Tags: []
+Categories: []
+DisableComments: no
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>In this post I’m going to discuss collapsed gibbs sampling and how we can apply it to our gaussian mixture model to model an Infinite Gaussian Mixture Model, aslo known as the Dirichlet Process Gaussian Mixture Model or DPGMM. The name is derived because we place a Dirichlet Process prior on the number of components allowing the number of components to be derived from the data instead of relying on the user to guess the correct number of components.</p>
+</div>
+<div id="collapsed-gibbs" class="section level1">
+<h1>Collapsed Gibbs</h1>
+<p>Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required. Looking back at our GMM from other posts, we know that we chose <span class="math inline">\(p(\pi|\alpha)\)</span> and <span class="math inline">\(p(\mu,\Sigma| \beta)\)</span> to be conjugate so we are actually able to integrate them out and only sample from <span class="math inline">\(p(z|z_{\neg i},\beta,\alpha)\)</span>. Kamper (2013) shows that:
+<span class="math display">\[
+\begin{align*}
+p(z_i=k|z_{\neg i},\mathcal{D},\beta,\alpha) &amp; \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)
+\end{align*}
+\]</span>
+Focusing on the first term we can start by integrating out <span class="math inline">\(\pi\)</span>:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(z|\alpha) &amp; = \int_{\pi}p(z|\pi)p(\pi|\alpha)d\pi\\
+&amp; = \int_{\pi}\prod_{k=1}^K\pi_k^{N_k}\frac{1}{B(\alpha)}\prod_{k=1}^Kx_k^{\alpha_k -1}d\pi\\
+&amp; = \frac{1}{B(\alpha)}\int_{\pi}\prod_{k=1}^K\pi_k^{N_k+\alpha_k -1}d\pi\\
+\end{align*}
+\]</span>
+Here we recognize that the integral of the 2nd term is the inverse of the normalizing constand from the Dirichlet distribution. This trick is why we are allowed to integrate out these parameters and we will reuse this trick when dealing with <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\Sigma\)</span>. Therefore,</p>
+<p><span class="math display">\[
+\begin{align*}
+p(z|\alpha) &amp; = \frac{\Gamma(\alpha)}{\Gamma(N+\alpha)}\prod_{k=1}^K\frac{\Gamma\left(N_K + \frac{\alpha}{k}\right)}{\Gamma\left(\frac{\alpha}{k}\right)}
+\end{align*}
+\]</span>
+Now we can work to get this in the form that we want, which is as follows:
+<span class="math display">\[
+\begin{align*}
+p(z_i =k | z_{\neg i}, \alpha) &amp; = \frac{p(z_i =k, z_{\neg i} | \alpha)}{p(z_{\neg i}| \alpha)}\\
+&amp; = \frac{p(z_i = k | \alpha)}{p(z_{\neg i}| \alpha)}\\
+&amp; = \frac{N_{k \neg i} + \frac{\alpha}{k}}{N+\alpha - 1}
+\end{align*}
+\]</span>
+Next we can turn our attention to <span class="math inline">\(p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)\)</span> where <span class="math inline">\(\beta\)</span> represents the parameters to the Normal Inverse Wishart distribution. Using [1, p.843] we get:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) &amp; = p(x_i|\mathcal{D}_{k\neg i},\beta)\\
+&amp; = \frac{p(x_i,\mathcal{D}_{k\neg i}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}\\
+&amp; = \frac{p(\mathcal{D}_{k}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}
+\end{align*}
+\]</span></p>
+<p>Which is equivalent to the posterior predictive distribution given by:</p>
+<p><span class="math display">\[
+\begin{align*}
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) &amp; = \mathcal{T}\left(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1\right)
+\end{align*}
+\]</span>
+Now let’s use the same data as from prior posts and solve the finite GMM case when <span class="math inline">\(k=3\)</span>.</p>
+<pre class="python"><code>import numpy as np
+from numpy.random import multinomial
+from scipy.stats import dirichlet, multivariate_t, multivariate_normal
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+import pandas as pd
+
+# Define parameters for K=3 Mixture of Multivariate Gaussians
+phi = [.3, .5, .2]
+mu = np.array([[13,5], [0,-2], [-14,3]])
+cov_1 = np.array([[2.0, 0.3], [0.3, 0.5]])
+cov_2 = np.array([[3.0,.4], [.4,3.0]])    
+cov_3 = np.array([[1.7,-.7], [-.7,1.7]])
+cov = np.stack((cov_1, cov_2, cov_3), axis = 0)
+
+def data_gen(mu, cov, phi, n):
+    &quot;&quot;&quot;
+    Generates samples from Mixture of K Multivariate Gaussian Distributions
+    &quot;&quot;&quot;
+    y = np.empty((n, 2))
+    z = []
+    for i in range(n):
+        ind = multinomial(1, phi)
+        for j, val in enumerate(ind):
+            if val == 1:
+                z.append(j)
+                y[i,:] = np.random.multivariate_normal(mu[j,:], cov[j,:,:])
+            else:
+                next
+    return np.array(y), z
+  
+data, z = data_gen(mu, cov, phi, 500)
+x, y = np.mgrid[-17:17.5:.1, -7:7.5:.1]
+pos = np.dstack((x,y))
+
+fig, ax = plt.subplots()
+ax.scatter(data[:,0], data[:,1], alpha = .6)
+for i in range(3):
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)
+</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fedf6135cd0&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fedf615dca0&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fedf5ff91f0&gt;</code></pre>
+<pre class="python"><code>fig.suptitle(&quot;K=3 GMM&quot;)
+ax.grid()
+fig.savefig(&quot;data_plot.png&quot;)
+plt.close(fig)</code></pre>
+<p><img src="data_plot.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+<p>And now we create our code for the collapsed gibbs sampler and fit it to our data.</p>
+<pre class="python"><code>
+def collapsed_gibbs(data, a, v, K, iters = 500):
+    N = data.shape[0]
+    D = data.shape[1]
+    assert v &gt; D-1, &quot;v must be greater than D-1&quot;
+    alpha = np.repeat(a, K)
+    z = np.random.choice(K, size = N, replace = True, p =dirichlet(alpha / K).rvs().squeeze())
+    for _ in range(iters):
+        for i in range(N):
+            # Remove x_i from data and Z
+            d2 = np.delete(data, i, axis=0)
+            z2 = np.delete(z, i, axis=0)
+            p_z = []
+            for k in range(K):
+                mu_k = np.mean(d2[z2 == k], axis=0)
+                # cov_k = np.cov(d2[z2 == k], rowvar=False)
+                n_k = np.sum(z2 == k)
+                p_z_k = (n_k + a/K) / (N + a - 1)
+                S_k = np.dot(np.transpose(d2[z2 == k] - mu_k), d2[z2 == k] - mu_k) + np.eye(D)
+                p_x_i = multivariate_t(mu_k, ((n_k+1) / (n_k *(n_k + v - D + 1)))*S_k, n_k+v - D + 1).pdf(data[i,])
+                p_z_k = p_z_k * p_x_i
+                p_z.append(p_z_k)
+            # Standardize prob vector p(z_i = k)
+            p_z = p_z / np.sum(p_z)
+            z[i] = np.random.choice(K, 1, replace=True, p = p_z)
+
+    return z
+
+z_pred = collapsed_gibbs(data, 5, 2, K=3, iters=20)
+
+fig, ax = plt.subplots()
+cols = [&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;]
+for i, v in enumerate(cols):
+    d2 = data[np.array(z_pred) == i,:]
+    ax.scatter(d2[:,0], d2[:,1], color=v, alpha = .6)
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)
+</code></pre>
+<pre><code>## &lt;matplotlib.collections.PathCollection object at 0x7fedf78ba310&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fedf78bad60&gt;
+## &lt;matplotlib.collections.PathCollection object at 0x7fedf78babb0&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fedf78bac70&gt;
+## &lt;matplotlib.collections.PathCollection object at 0x7fedf78c8af0&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fedf78ba2b0&gt;</code></pre>
+<pre class="python"><code>fig.suptitle(&quot;Collapsed Gibbs for Finite GMM&quot;)
+ax.grid()
+fig.savefig(&quot;collapsed_gibbs.png&quot;)
+plt.close(fig)</code></pre>
+<p><img src="collapsed_gibbs.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+</div>
