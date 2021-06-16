@@ -6,17 +6,7 @@
     <description>Recent content on Website of Joseph Blazick</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 12 Jun 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Collapsed Gibbs Sampling and DPGMM</title>
-      <link>http://blazickjp.github.io/post/2021-06-12-collapsed-gibbs-sampling/</link>
-      <pubDate>Sat, 12 Jun 2021 00:00:00 +0000</pubDate>
-      
-      <guid>http://blazickjp.github.io/post/2021-06-12-collapsed-gibbs-sampling/</guid>
-      <description>Introduction In this post I’m going to discuss collapsed gibbs sampling and how we can apply it to our gaussian mixture model to model an Infinite Gaussian Mixture Model, aslo known as the Dirichlet Process Gaussian Mixture Model or DPGMM. The name is derived because we place a Dirichlet Process prior on the number of components allowing the number of components to be derived from the data instead of relying on the user to guess the correct number of components.
- Collapsed Gibbs Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required.</description>
-    </item>
-    
+    <lastBuildDate>Sat, 03 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://blazickjp.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dirichlet Processes</title>
       <link>http://blazickjp.github.io/post/2021-04-03-dirichlet-processes/</link>

@@ -3,15 +3,12 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://blazickjp.github.io/</loc>
-    <lastmod>2021-06-12T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/post/2021-06-12-collapsed-gibbs-sampling/</loc>
-    <lastmod>2021-06-12T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://blazickjp.github.io/post/</loc>
-    <lastmod>2021-06-12T00:00:00+00:00</lastmod>
+    <lastmod>2021-04-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://blazickjp.github.io/post/2021-04-03-dirichlet-processes/</loc>
+    <lastmod>2021-04-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://blazickjp.github.io/post/</loc>
     <lastmod>2021-04-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://blazickjp.github.io/post/2021-04-10-bivariate-gmm/</loc>

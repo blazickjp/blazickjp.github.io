@@ -61,7 +61,7 @@ Which is equivalent to the posterior predictive distribution given by:
 
 $$
 \begin{align*}
-p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = \mathcal{T}(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1)
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = \mathcal{T}\left(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1\right)
 \end{align*}
 $$
 Now let's use the same data as from prior posts and solve the finite GMM case when $k=3$.
