@@ -64,6 +64,40 @@ $$
 p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = \mathcal{T}\left(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1\right)
 \end{align*}
 $$
+Now that we have everything that we need, we can formally write out the collapsed gibbs algorithm as follows:
+
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.js"
+        integrity="sha256-F/Xda58SPdcUCr+xhSGz9MA2zQBPb0ASEYKohl8UCHc=" crossorigin="anonymous">
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css">
+<script src="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.js">
+</script>
+</head>
+<pre id="collapsed_gibbs" style="display:hidden;">
+    \begin{algorithm}
+    \caption{Collapsed Gibbs Sampler for a finite GMM}
+    \begin{algorithmic}
+    \STATE Choose an initial $\pmb{z}$
+        \FOR{$T$ iterations}
+          \FOR{$i=1$ to $N$}
+            \STATE Remove $x_i$'s  statistics from $z_i$
+            \FOR{$k=1$ to $K$}
+            \STATE Calculate $p(z_i = k|z_{\neg i},\alpha)$
+            \STATE Calculate $p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta)$
+            \STATE Calculate $p(z_i = k |z_{\neg i},\mathcal{D},\alpha,\beta) \propto p(z_i = k|z_{\neg i},\alpha)p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta)$
+            \ENDFOR
+            \STATE Sample $k_{new}$ from $p(z_i = k |z_{\neg i},\mathcal{D},\alpha,\beta)$ after normalizing
+            \STATE Add $x_i$'s statistic to the component $z_i = k_{new}$
+          \ENDFOR
+        \ENDFOR
+    \end{algorithmic}
+    \end{algorithm}
+</pre>
+<script>
+    pseudocode.renderElement(document.getElementById("collapsed_gibbs"));
+</script>
+
 Now let's use the same data as from prior posts and solve the finite GMM case when $k=3$.
 
 ```{python,}
@@ -103,9 +137,9 @@ x, y = np.mgrid[-17:17.5:.1, -7:7.5:.1]
 pos = np.dstack((x,y))
 
 fig, ax = plt.subplots()
-ax.scatter(data[:,0], data[:,1], alpha = .6)
+ax.scatter(data[:,0], data[:,1], alpha = .6);
 for i in range(3):
-    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both')
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both');
 
 
 fig.suptitle("K=3 GMM")
@@ -155,8 +189,8 @@ fig, ax = plt.subplots()
 cols = ["red", "blue", "green"]
 for i, v in enumerate(cols):
     d2 = data[np.array(z_pred) == i,:]
-    ax.scatter(d2[:,0], d2[:,1], color=v, alpha = .6)
-    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both')
+    ax.scatter(d2[:,0], d2[:,1], color=v, alpha = .6);
+    ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both');
 
 
 fig.suptitle("Collapsed Gibbs for Finite GMM")
@@ -168,3 +202,140 @@ plt.close(fig)
 ```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
 knitr::include_graphics("collapsed_gibbs.png")
 ```
+
+## Extending to the Infinite GMM
+
+Extending our existing model to the case with infinite clusters is rather straight forward from here. In my last post I discuss the Dirichlet Process and how you can model an infinite probability vector using the Chinese Restaurant Process.
+
+Earlier we showed that,
+
+$$
+\begin{align*}
+p(z_i =k | z_{\neg i}, \alpha) & = \frac{N_{k \neg i} + \frac{\alpha}{k}}{N+\alpha - 1}
+\end{align*}
+$$
+In the case of infinite $K$ we end up with a CRP where:
+
+$$
+\begin{align*}
+p(z_i =k | z_{\neg i}, \alpha) & = \left\{
+\begin{array}{ll}
+      \frac{N_{k \neg i}}{N+\alpha - 1}  & \text{if}\;\;\; N_k > 0\\
+      \frac{\alpha}{N+\alpha - 1}  & \text{Otherwise}\\
+\end{array} 
+\right. \\
+\end{align*}
+$$
+Everything else is the same as the finite GMM giving the following Algorithm,
+
+<pre id="collapsed_gibbs_igmm" style="display:hidden;">
+    \begin{algorithm}
+    \caption{Collapsed Gibbs Sampler for an Infinite GMM}
+    \begin{algorithmic}
+    \STATE Choose an initial $\pmb{z}$
+        \FOR{$T$ iterations}
+          \FOR{$i=1$ to $N$}
+            \STATE Remove $x_i$'s  statistics from $z_i$
+            \FOR{$k=1$ to $K$}
+              \STATE Calculate $p(z_i = k|z_{\neg i},\alpha)$
+              \STATE Calculate $p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta)$
+              \STATE Calculate $p(z_i = k |z_{\neg i},\mathcal{D},\alpha,\beta) \propto p(z_i = k|z_{\neg i},\alpha)p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta)$
+            \ENDFOR
+            \STATE Calculate $p(z_i =k^* | z_{\neg i}, \alpha) = \frac{\alpha}{N+\alpha - 1}$
+            \STATE Calculate $p(x_i|\beta)$ Under the Prior
+            \STATE Calculate $p(z_i = k^* |z_{\neg i},\mathcal{D},\alpha,\beta) \propto p(z_i =k^* | z_{\neg i}, \alpha)p(x_i|\beta)$
+            \STATE Sample $k_{new}$ from $p(z_i = k |z_{\neg i},\mathcal{D},\alpha,\beta)$ after normalizing
+            \STATE Add $x_i$'s statistic to the component $z_i = k_{new}$
+            \STATE If any component is empty, remove it and decrease $K$
+          \ENDFOR
+        \ENDFOR
+    \end{algorithmic}
+    \end{algorithm}
+</pre>
+<script>
+    pseudocode.renderElement(document.getElementById("collapsed_gibbs_igmm"));
+</script>
+
+Now we can create the code for our Infinite GMM Gibbs Sampler.
+
+```{python}
+def collapsed_gibbs_IGMM(data, a, v, K, iters = 500):
+    N = data.shape[0]
+    D = data.shape[1]
+    assert v > D-1, "v must be greater than D-1"
+    alpha = np.repeat(a, K)
+    z = np.random.choice(K, size = N, replace = True, p =dirichlet(alpha / K).rvs().squeeze())
+    df = pd.DataFrame({"k": z, "p_z": np.nan})
+    g_not = []
+    for q in range(iters):
+        for i in range(N):
+            groups = list(np.unique(z))
+            # Remove x_i from data and Z
+            d2 = np.delete(data, i, axis=0)
+            z2 = np.delete(z, i, axis=0)
+            p_z = []
+            g = []
+            for k in groups:
+                if np.sum([z2 == k]) == 0:
+                    g_not.append(k)
+                    # This is the last group so just move on
+                    continue
+                
+                mu_k = np.mean(d2[z2 == k], axis=0)
+                # cov_k = np.cov(d2[z2 == k], rowvar=False)
+                n_k = np.sum(z2 == k)
+                p_z_k = (n_k + a/K) / (N + a - 1)
+                S_k = np.dot(np.transpose(d2[z2 == k] - mu_k), d2[z2 == k] - mu_k) + np.eye(D)
+                p_x_i = multivariate_t(mu_k, ((n_k+1) / (n_k *(n_k + v - D + 1)))*S_k, n_k+v - D + 1).pdf(data[i,])
+                p_z_k = p_z_k * p_x_i
+                g.append(k)
+                p_z.append(p_z_k)
+            
+            # Now consider new component
+            p_z_k = (a / len(groups)) / (N + (a/len(groups)) - 1)
+            p_x_i = multivariate_t([0 ,0], np.eye(D), v - D + 1).pdf(data[i,])
+            p_z_k = p_z_k * p_x_i
+            g.append(k+1)
+            p_z.append(p_z_k)
+            # Standardize prob vector p(z_i = k)
+            p_z = p_z / np.sum(p_z)
+            z[i] = np.random.choice(g, 1, replace=True, p = p_z)
+        df = pd.DataFrame({
+            'z': z,
+        }).groupby(['z']).size().reset_index(name='counts')
+        # Rename clusters to reindex to zero
+        # z and z_new are the same thing, but z_new has cluster names from 0 - K
+        # where z has cluster names > K. This can be a problem when using the cluster
+        # name to subset a list of colors (which is why we rename them)
+        lookup = df.to_dict()['z']
+        lookup = dict((v,k) for k, v in lookup.items()) 
+        z_new = np.array([lookup.get(i) for i in z])
+    return z, df, z_new
+
+z_pred, df, z_new = collapsed_gibbs_IGMM(data, 1, 10, K=5, iters=50)
+
+fig, ax = plt.subplots()
+# Given that we expect 3 clusters, we assume we won't need more than 6 colors
+cols = ["red", "blue", "green", "grey", "yellow", "black"]
+# Filter down to required colors. 
+cols1 = [cols[i] for i, v in enumerate(np.unique(z_new))]
+print(cols)
+for i, v in enumerate(cols1):
+    d2 = data[np.array(z_new) == i,:]
+    ax.scatter(d2[:,0], d2[:,1], color=v, alpha = .6, label = v)
+    if i in range(3):
+        ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend='both')
+
+
+fig.suptitle(f"Collapsed Gibbs for Infinite GMM, {df.shape[0]} Clusters Found")
+ax.grid()
+fig.legend()
+fig.savefig("collapsed_gibbs_igmm.png")
+plt.close(fig)
+```
+
+```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
+knitr::include_graphics("collapsed_gibbs_igmm.png")
+```
+
+Note that we do have a few extra clusters here, but for the most part our output looks pretty good. With our gibbs sampler, we will continue to add and remove clusters but we've clearly converged to approximately 3 total clusters. 
