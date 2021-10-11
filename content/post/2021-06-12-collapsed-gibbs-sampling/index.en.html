@@ -1,14 +1,15 @@
 ---
-title: Collapsed Gibbs Sampling and DPGMM
-author: 'Josepg Blazick'
+title: "Collapsed Gibbs Sampling and DPGMM"
+author: "Josepg Blazick"
 date: '2021-06-12'
-slug: []
+output: pdf_document
 categories: []
 tags: []
 Description: ''
 Tags: []
 Categories: []
 DisableComments: no
+slug: []
 ---
 
 <script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
@@ -16,25 +17,25 @@ DisableComments: no
 
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>In this post I’m going to discuss collapsed gibbs sampling and how we can apply it to our gaussian mixture model to model an Infinite Gaussian Mixture Model, aslo known as the Dirichlet Process Gaussian Mixture Model or DPGMM. The name is derived because we place a Dirichlet Process prior on the number of components allowing the number of components to be derived from the data instead of relying on the user to guess the correct number of components.</p>
+<p>In this post I’m going to discuss collapsed gibbs sampling and how we can apply it to our Gaussian Mixture Model to model an Infinite Gaussian Mixture Model, also known as the Dirichlet Process Gaussian Mixture Model or DPGMM. The name is derived because we place a Dirichlet Process prior on the number of components allowing the number of components to be derived from the data instead of relying on the user to guess the correct number of components.</p>
 </div>
 <div id="collapsed-gibbs" class="section level1">
 <h1>Collapsed Gibbs</h1>
-<p>Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out some parameters which allows us to reduce the number of sampling procedures required. Looking back at our GMM from other posts, we know that we chose <span class="math inline">\(p(\pi|\alpha)\)</span> and <span class="math inline">\(p(\mu,\Sigma| \beta)\)</span> to be conjugate so we are actually able to integrate them out and only sample from <span class="math inline">\(p(z|z_{\neg i},\beta,\alpha)\)</span>. Kamper (2013) shows that:
+<p>Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\Sigma\)</span>, and <span class="math inline">\(\pi\)</span> which allows us to reduce the number of sampling procedures required. It can also be shown that collapsed gibbs sampling will converge more efficiently in the MCMC chain. The reasons for this are beyond the scope of this post, but we might add another post later focusing on this topic. Looking back at our GMM from other posts, we know that we chose <span class="math inline">\(p(\pi|\alpha)\)</span> and <span class="math inline">\(p(\mu,\Sigma| \beta)\)</span> to be conjugate so we are actually able to integrate them out and only sample from <span class="math inline">\(p(z|z_{\neg i},\beta,\alpha)\)</span>. Here we’re using the notation <span class="math inline">\(z_{\neg i}\)</span> to denote the vector <span class="math inline">\(z\)</span> after removing <span class="math inline">\(z_i\)</span>. Kamper (2013) shows that:
 <span class="math display">\[
 \begin{align*}
 p(z_i=k|z_{\neg i},\mathcal{D},\beta,\alpha) &amp; \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)
 \end{align*}
 \]</span>
-Focusing on the first term we can start by integrating out <span class="math inline">\(\pi\)</span>:</p>
+We can start by breakup up the right hand side of the statement and by focusing on the first term. Here we only need to integrate out <span class="math inline">\(\pi\)</span> from <span class="math inline">\(p(z_i=k|\alpha)\)</span>.</p>
 <p><span class="math display">\[
 \begin{align*}
-p(z|\alpha) &amp; = \int_{\pi}p(z|\pi)p(\pi|\alpha)d\pi\\
+p(z_i = k|\alpha) &amp; = \int_{\pi}p(z|\pi)p(\pi|\alpha)d\pi\\
 &amp; = \int_{\pi}\prod_{k=1}^K\pi_k^{N_k}\frac{1}{B(\alpha)}\prod_{k=1}^Kx_k^{\alpha_k -1}d\pi\\
 &amp; = \frac{1}{B(\alpha)}\int_{\pi}\prod_{k=1}^K\pi_k^{N_k+\alpha_k -1}d\pi\\
 \end{align*}
 \]</span>
-Here we recognize that the integral of the 2nd term is the inverse of the normalizing constand from the Dirichlet distribution. This trick is why we are allowed to integrate out these parameters and we will reuse this trick when dealing with <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\Sigma\)</span>. Therefore,</p>
+We can recognize that <span class="math inline">\(\pi_k^{N_k+\alpha_k -1}d\pi\)</span> as the un-normalized Dirichlet distribution. Taking advantage of this fact we can show that for any un-normalized probability distribution <span class="math inline">\(D\)</span>, <span class="math inline">\(\int D = \frac{1}{C}\)</span> where <span class="math inline">\(C\)</span> is the normalizing constant of the distribution. Therefore,</p>
 <p><span class="math display">\[
 \begin{align*}
 p(z|\alpha) &amp; = \frac{\Gamma(\alpha)}{\Gamma(N+\alpha)}\prod_{k=1}^K\frac{\Gamma\left(N_K + \frac{\alpha}{k}\right)}{\Gamma\left(\frac{\alpha}{k}\right)}

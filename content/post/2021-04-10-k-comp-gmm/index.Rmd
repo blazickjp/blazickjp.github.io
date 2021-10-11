@@ -1,14 +1,15 @@
 ---
-title: Extending GMM Gibbs Sampling to K-Components
-author: Joseph Blazick
+title: "Extending GMM Gibbs Sampling to K-Components"
+author: "Joseph Blazick"
 date: '2020-10-17'
-slug: []
+output: pdf_document
 categories: []
 tags: []
 Description: ''
 Tags: []
 Categories: []
 DisableComments: no
+slug: []
 ---
 ## Introduction
 
