@@ -48,7 +48,7 @@ as <span class="math inline">\(p(\theta|data)\)</span>. The idea behind the Gibb
 <div id="mixture-of-normals" class="section level2">
 <h2>Mixture of Normals</h2>
 <p>Now that we understand the ideas behind Gibbs Sampling, let’s determine how we can use it to fit a mixture of 2 univariate gaussians. Our model is defined by <span class="math inline">\(p(x|\theta) = \pi\phi_{\theta_i}(x) + (1-\pi)\phi_{\theta_2}(x)\)</span>. This just means that we have some probability <span class="math inline">\(\pi\)</span> of taking our observation from <span class="math inline">\(\phi_{\theta_1}(x)\)</span> where <span class="math display">\[\phi_{\theta_1}(x) \sim N(\mu_1, \sigma^2_1)\]</span> and <span class="math inline">\((1-\pi)\)</span> probability of coming
-from <span class="math inline">\(\phi_{\theta_2}(x)\)</span> where <span class="math inline">\(\phi_{\theta_2}(x) \sim N(\mu_2, \sigma^2_2)\)</span>. Using python we can show this as follows:</p>
+from <span class="math inline">\(\phi_{\theta_2}(x)\)</span> where <span class="math inline">\(\phi_{\theta_2}(x) \sim N(\mu_2, \sigma^2_2)\)</span>. <span class="citation"><a href="#ref-blei2015" role="doc-biblioref">Blei</a> (<a href="#ref-blei2015" role="doc-biblioref">2015</a>)</span> Using python we can show this as follows:</p>
 <pre class="python"><code>import numpy as np
 from numpy.random import binomial, normal, beta, multinomial
 import scipy.stats as st
@@ -283,6 +283,9 @@ fig.subplots_adjust(hspace=1)
 fig.savefig(&quot;m2g_trace.png&quot;)</code></pre>
 <p><img src="m2g_trace.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-blei2015" class="csl-entry">
+Blei, David M. 2015. <em>Bayesian Mixture Models and the Gibbs Sampler</em>. <em>Columbia University</em>. <a href="http://www.cs.columbia.edu/~blei/fogm/2015F/notes/mixtures-and-gibbs.pdf">http://www.cs.columbia.edu/~blei/fogm/2015F/notes/mixtures-and-gibbs.pdf</a>.
+</div>
 <div id="ref-murphy2012" class="csl-entry">
 Murphy, Kevin P. 2012. <em>Machine Learning: A Probabilistic Perspective</em>. The MIT Press.
 </div>

@@ -9,6 +9,8 @@ Description: ''
 Tags: []
 Categories: []
 DisableComments: no
+link-citations: true
+bibliography: [../bib.bib]
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
@@ -69,9 +71,9 @@ fig, ax = plt.subplots()
 ax.scatter(data[:,0], data[:,1], alpha = .6)
 for i in range(len(mu)):
     ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x12ae15fd0&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x12bc03f70&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x12ae15f40&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c5e40310&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c6318190&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c5edbe80&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;k3.png&quot;)</code></pre>
@@ -87,7 +89,8 @@ p(\pmb{\mu_j}|\Sigma_j) &amp; \sim N(\pmb{\xi_o}, \frac{\Sigma_j}{\kappa_o})\\
 p(\pmb{\mu_j}, \Sigma_j) &amp; \sim NIW(\pmb{\xi_o}, \kappa_o, \Lambda_o, v_o)\\
 &amp; \propto \left|\Sigma_j\right|^{-\frac{v_o + d}{2}-1}\exp\left(-\frac{1}{2}tr(\Lambda_o\Sigma_j^{-1})- \frac{\kappa_o}{2}(\pmb{\mu_j} - \pmb{\xi_o})^T\Sigma_j^{-1}(\pmb{\mu_j} - \pmb{\xi_o})\right)
 \end{align*}
-\]</span></p>
+\]</span>
+<span class="citation"><a href="#ref-kamper2013" role="doc-biblioref">Kamper</a> (<a href="#ref-kamper2013" role="doc-biblioref">2013</a>)</span></p>
 </div>
 <div id="complete-conditional-for-pmbmu_j-and-sigma_j" class="section level2">
 <h2>Complete Conditional for <span class="math inline">\(\pmb{\mu_j}\)</span> and <span class="math inline">\(\Sigma_j\)</span></h2>
@@ -121,7 +124,7 @@ p(\pmb{\mu_j} | \Sigma_j, z, x, \pi) &amp; \propto \exp \left(-\frac{1}{2}\left[
 p(\pmb{\mu_j} | \Sigma_j, z, x, \pi) &amp; \sim N\left(\frac{n_j\pmb{\bar{x}} + \kappa_o\pmb{\xi_o}}{n_j + \kappa_o}, \frac{\Sigma_j}{n_j+\kappa_o}\right)
 \end{align*}
 \]</span></p>
-<p>It’s worth noting that mean of the update for <span class="math inline">\(\pmb{\mu_j}\)</span> is a weighted average of the prior mean <span class="math inline">\(\pmb{\xi_o}\)</span> and the sample mean <span class="math inline">\(\pmb{\bar{x}}\)</span>. The less data we have in component <span class="math inline">\(j\)</span> the more weight is put on the prior. We choose our prior such that <span class="math inline">\(\pmb{\xi_o} = \pmb{0}\)</span> and <span class="math inline">\(\kappa_o = 0\)</span> to give the following update function:</p>
+<p>It’s worth noting that mean of the update for <span class="math inline">\(\pmb{\mu_j}\)</span> is a weighted average of the prior mean <span class="math inline">\(\pmb{\xi_o}\)</span> and the sample mean <span class="math inline">\(\pmb{\bar{x}}\)</span>. The less data we have in component <span class="math inline">\(j\)</span> the more weight is put on the prior <span class="citation"><a href="#ref-murphy2012" role="doc-biblioref">Murphy</a> (<a href="#ref-murphy2012" role="doc-biblioref">2012</a>)</span>. We choose our prior such that <span class="math inline">\(\pmb{\xi_o} = \pmb{0}\)</span> and <span class="math inline">\(\kappa_o = 0\)</span> to give the following update function:</p>
 <pre class="python"><code>def update_mu(data, z_mat, cov):
     &quot;&quot;&quot;
     Sample from Posterior Conditional for mu
@@ -136,6 +139,7 @@ p(\pmb{\mu_j} | \Sigma_j, z, x, \pi) &amp; \sim N\left(\frac{n_j\pmb{\bar{x}} + 
     
     return mu</code></pre>
 <p>Similarly we can condition on <span class="math inline">\(\Sigma_j\)</span> to get our next complete conditional. Here its helpful to remember the “trace trick” where <span class="math inline">\(\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)\)</span>. We will also let <span class="math inline">\(S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T\)</span> and $G = ( - )( - )^T$</p>
+<p><span class="citation"><a href="#ref-kamper2013" role="doc-biblioref">Kamper</a> (<a href="#ref-kamper2013" role="doc-biblioref">2013</a>)</span></p>
 <p><span class="math display">\[
 \begin{align*}
 p(\Sigma_j | \pmb{\mu_j}, z, x, \pi) &amp; \propto \left|\Sigma_j\right|^{-\frac{n_j+d+v_o}{2}-1}\exp\left(-\frac{1}{2}\text{tr}(\Sigma_j^{-1}S) - \frac{1}{2}\text{tr}(\Lambda_o\Sigma_j^{-1}) - \frac{\kappa_o}{2}\text{tr}(\Sigma_j^{-1}G)\right)\\
@@ -231,12 +235,20 @@ for i in range(3):
         multivariate_normal(mu_fitted[i,:], 
         cov_fitted[i,:,:]).pdf(pos), 
         extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x12ee38c10&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x12ee38e20&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x12ee38f10&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c7fa7d30&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c7fa7e20&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c7fa7f10&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Fitted Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;fitted.png&quot;)</code></pre>
 <p><img src="fitted.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 <p>We can see above that our model fits the bivariate mixture very well. Because we have so many different parameters, I will skip over the trace plots which show convergence.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-kamper2013" class="csl-entry">
+Kamper, Herman. 2013. <a href="https://www.kamperh.com/notes/kamper_bayesgmm13.pdf">https://www.kamperh.com/notes/kamper_bayesgmm13.pdf</a>.
+</div>
+<div id="ref-murphy2012" class="csl-entry">
+Murphy, Kevin P. 2012. <em>Machine Learning: A Probabilistic Perspective</em>. The MIT Press.
+</div>
+</div>
 </div>

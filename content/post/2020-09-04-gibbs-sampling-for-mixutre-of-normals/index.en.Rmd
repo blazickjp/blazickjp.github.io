@@ -48,7 +48,7 @@ as $p(\theta|data)$. The idea behind the Gibbs Sampler is to sweep through each 
 ## Mixture of Normals
 
 Now that we understand the ideas behind Gibbs Sampling, let's determine how we can use it to fit a mixture of 2 univariate gaussians. Our model is defined by $p(x|\theta) = \pi\phi_{\theta_i}(x) + (1-\pi)\phi_{\theta_2}(x)$. This just means that we have some probability $\pi$ of taking our observation from $\phi_{\theta_1}(x)$ where $$\phi_{\theta_1}(x) \sim N(\mu_1, \sigma^2_1)$$ and $(1-\pi)$ probability of coming 
-from $\phi_{\theta_2}(x)$ where $\phi_{\theta_2}(x) \sim N(\mu_2, \sigma^2_2)$. Using python we can show this as follows:
+from $\phi_{\theta_2}(x)$ where $\phi_{\theta_2}(x) \sim N(\mu_2, \sigma^2_2)$. @blei2015 Using python we can show this as follows:
 
 ```{python}
 import numpy as np
