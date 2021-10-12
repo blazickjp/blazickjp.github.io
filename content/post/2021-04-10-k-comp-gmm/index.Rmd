@@ -9,7 +9,8 @@ Description: ''
 Tags: []
 Categories: []
 DisableComments: no
-slug: []
+link-citations: true
+bibliography: [../bib.bib]
 ---
 ## Introduction
 
@@ -76,13 +77,13 @@ knitr::include_graphics("mix2.png")
 
 ## The Dirichlet Distribution
 
-Now that we are sampling from more than 2 gaussians, we need a distribution to define over $p(\pi)$ that generalizes to more than 2 groups. Recall that when we were using $K=2$, we had used the beta distribution. The multivariate generalization of the beta distribution is known as the Dirichlet distribution, often written as $Dir(\pmb{\alpha})$ where $\pmb{\alpha}$ is a vector of positive reals. The full Dirichlet distribution is defined as:
+Now that we are sampling from more than 2 gaussians, we need a distribution to define over $p(\pi)$ that generalizes to more than 2 groups. Recall that when we were using $K=2$, we had used the beta distribution. The multivariate generalization of the beta distribution is known as the Dirichlet distribution, often written as $Dir(\pmb{\alpha})$ where $\pmb{\alpha}$ is a vector of positive reals @wiki:dd. The full Dirichlet distribution is defined as:
 
 $$
 p(\pi_1, ..., \pi_k | \pmb{\alpha}) = \frac{\Gamma\left(\sum_{j=1}^K\alpha_j\right)}{\prod_{j=1}^k\Gamma(\alpha_j)}\prod_{j=1}^K\pi_j^{\alpha_j-1}
 $$
 
-We can generate samples from the Dirichlet Distribution with various parameters to better understand how the distribution works. The top left plot shows the case when $\pmb{\alpha}$ is equal for all $k$, but small. This results in the samples over each group to be pushed more towards 1 or 0. In the extreme, the samples of vector $\pmb{\pi}$ has one group with $\pi_j = 1$ and the rest with $\pi_{\neg j} = 0$. In the other plots where $\pmb{\alpha}$ is equal across all $k$, we can see that increasing the magnitude of $\pmb{\alpha}$ reduces the variance in the samples of $\pmb{\pi}$ The last plot demonstrates how varying $\alpha_j$ changes the mean of each $\pi_j$ being sampled based on the proportions of $\alpha_j$ compared to $\alpha_{\neg j}$ 
+We can generate samples from the Dirichlet Distribution with various parameters to better understand how the distribution works. The top left plot shows the case when $\pmb{\alpha}$ is equal for all $k$, but small. This results in the samples over each group to be pushed towards 1 or 0. In the extreme, the samples of vector $\pmb{\pi}$ has one group with $\pi_j = 1$ and the rest with $\pi_{\neg j} = 0$. In the other plots where $\pmb{\alpha}$ is equal across all $k$, we can see that increasing the magnitude of $\pmb{\alpha}$ reduces the variance in the samples of $\pmb{\pi}$ The last plot demonstrates how varying $\alpha_j$ changes the mean of each $\pi_j$ being sampled based on the proportions of $\alpha_j$ compared to $\alpha_{\neg j}$ 
 
 
 ## Deriving Complete Conditional of $\pi$  
@@ -167,7 +168,7 @@ $$
 p(\mu|x, z, \pmb{\sigma}, \pmb{\pi}) & \sim IG\left(\frac{1}{2}n_j + 1, 1 + \frac{1}{2}\sum_{i=1}^N(x-\mu_j)^2\right)
 \end{align*}
 $$
-
+@peng2021
 ```{python}
 def update_sigma(data, z_mat, mu):
     """
