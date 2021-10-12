@@ -9,6 +9,8 @@ Description: ''
 Tags: []
 Categories: []
 DisableComments: no
+link-citations: true
+bibliography: [../bib.bib]
 ---
 
 ## Introduction
@@ -92,6 +94,7 @@ p(\pmb{\mu_j}, \Sigma_j) & \sim NIW(\pmb{\xi_o}, \kappa_o, \Lambda_o, v_o)\\
 & \propto \left|\Sigma_j\right|^{-\frac{v_o + d}{2}-1}\exp\left(-\frac{1}{2}tr(\Lambda_o\Sigma_j^{-1})- \frac{\kappa_o}{2}(\pmb{\mu_j} - \pmb{\xi_o})^T\Sigma_j^{-1}(\pmb{\mu_j} - \pmb{\xi_o})\right)
 \end{align*}
 $$
+@kamper2013
 
 ## Complete Conditional for $\pmb{\mu_j}$ and $\Sigma_j$
 
@@ -133,7 +136,7 @@ p(\pmb{\mu_j} | \Sigma_j, z, x, \pi) & \sim N\left(\frac{n_j\pmb{\bar{x}} + \kap
 \end{align*}
 $$
 
-It's worth noting that mean of the update for $\pmb{\mu_j}$ is a weighted average of the prior mean $\pmb{\xi_o}$ and the sample mean $\pmb{\bar{x}}$. The less data we have in component $j$ the more weight is put on the prior. We choose our prior such that $\pmb{\xi_o} = \pmb{0}$ and $\kappa_o = 0$ to give the following update function:
+It's worth noting that mean of the update for $\pmb{\mu_j}$ is a weighted average of the prior mean $\pmb{\xi_o}$ and the sample mean $\pmb{\bar{x}}$. The less data we have in component $j$ the more weight is put on the prior @murphy2012. We choose our prior such that $\pmb{\xi_o} = \pmb{0}$ and $\kappa_o = 0$ to give the following update function:
 
 ```{python}
 def update_mu(data, z_mat, cov):
@@ -151,7 +154,9 @@ def update_mu(data, z_mat, cov):
     return mu
 ```
 
-Similarly we can condition on $\Sigma_j$ to get our next complete conditional. Here its helpful to remember the "trace trick" where $\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)$. We will also let $S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T$ and $G = (\pmb{\mu_j} - \pmb{\xi_o})(\pmb{\mu_j} - \pmb{\xi_o})^T\$
+Similarly we can condition on $\Sigma_j$ to get our next complete conditional. Here its helpful to remember the "trace trick" where $\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)$. We will also let $S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T$ and $G = (\pmb{\mu_j} - \pmb{\xi_o})(\pmb{\mu_j} - \pmb{\xi_o})^T$
+
+@kamper2013
 
 $$
 \begin{align*}

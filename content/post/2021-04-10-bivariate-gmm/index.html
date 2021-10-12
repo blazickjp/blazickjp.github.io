@@ -71,9 +71,9 @@ fig, ax = plt.subplots()
 ax.scatter(data[:,0], data[:,1], alpha = .6)
 for i in range(len(mu)):
     ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c5e40310&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c6318190&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c5edbe80&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fa909000310&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fa9090be190&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fa90909be80&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;k3.png&quot;)</code></pre>
@@ -138,7 +138,7 @@ p(\pmb{\mu_j} | \Sigma_j, z, x, \pi) &amp; \sim N\left(\frac{n_j\pmb{\bar{x}} + 
         mu.append(sample)
     
     return mu</code></pre>
-<p>Similarly we can condition on <span class="math inline">\(\Sigma_j\)</span> to get our next complete conditional. Here its helpful to remember the “trace trick” where <span class="math inline">\(\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)\)</span>. We will also let <span class="math inline">\(S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T\)</span> and $G = ( - )( - )^T$</p>
+<p>Similarly we can condition on <span class="math inline">\(\Sigma_j\)</span> to get our next complete conditional. Here its helpful to remember the “trace trick” where <span class="math inline">\(\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)\)</span>. We will also let <span class="math inline">\(S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T\)</span> and <span class="math inline">\(G = (\pmb{\mu_j} - \pmb{\xi_o})(\pmb{\mu_j} - \pmb{\xi_o})^T\)</span></p>
 <p><span class="citation"><a href="#ref-kamper2013" role="doc-biblioref">Kamper</a> (<a href="#ref-kamper2013" role="doc-biblioref">2013</a>)</span></p>
 <p><span class="math display">\[
 \begin{align*}
@@ -235,9 +235,9 @@ for i in range(3):
         multivariate_normal(mu_fitted[i,:], 
         cov_fitted[i,:,:]).pdf(pos), 
         extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c7fa7d30&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c7fa7e20&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fe5c7fa7f10&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fa90b09cd30&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fa90b09ce20&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fa90b09cf10&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Fitted Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;fitted.png&quot;)</code></pre>

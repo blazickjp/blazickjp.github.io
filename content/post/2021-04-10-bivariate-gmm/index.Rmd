@@ -154,7 +154,7 @@ def update_mu(data, z_mat, cov):
     return mu
 ```
 
-Similarly we can condition on $\Sigma_j$ to get our next complete conditional. Here its helpful to remember the "trace trick" where $\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)$. We will also let $S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T$ and $G = (\pmb{\mu_j} - \pmb{\xi_o})(\pmb{\mu_j} - \pmb{\xi_o})^T\$
+Similarly we can condition on $\Sigma_j$ to get our next complete conditional. Here its helpful to remember the "trace trick" where $\pmb{x}^TA\pmb{x} = \text{tr}(\pmb{x}^TA\pmb{x}) = \text{tr}(A\pmb{x}\pmb{x}^T)$. We will also let $S = \sum_{i=1}^Nz_{ij}(\pmb{x_i} - \pmb{\mu_j})(\pmb{x_i} - \pmb{\mu_j})^T$ and $G = (\pmb{\mu_j} - \pmb{\xi_o})(\pmb{\mu_j} - \pmb{\xi_o})^T$
 
 @kamper2013
 

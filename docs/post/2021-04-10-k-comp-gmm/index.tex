@@ -1,0 +1,491 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Extending GMM Gibbs Sampling to K-Components},
+  pdfauthor={Joseph Blazick},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
+  % set entry spacing
+  \ifnum #2 > 0
+  \setlength{\parskip}{#2\baselineskip}
+  \fi
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+\title{Extending GMM Gibbs Sampling to K-Components}
+\author{Joseph Blazick}
+\date{2020-10-17}
+
+\begin{document}
+\maketitle
+
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+In my previous post, I derived a Gibbs Sampler for a univariate Gaussian
+Mixture Model (GMM). In this post I will extend the sampler to handle
+the K-Component univariate GMM. As a quick reminder, Gibbs Sampling is a
+MCMC method for sampling from multivariate distributions that may be
+difficult to sample from directly. The method is commonly used in
+bayesian inference when sampling the the posterior or joint distribution
+in question. The samples generated from the Markov chain will converge
+to the desired distribution when \(N\) is large.
+
+\hypertarget{k-component-gmm}{%
+\subsection{K-Component GMM}\label{k-component-gmm}}
+
+The K-Component GMM can be defined as
+\(p(x|\theta) = \sum_{j=1}^K\pi_j\phi_{\theta_j}(x)\). This model
+assumes that \(K\) is known, so let's set \(K=4\) and generate some data
+with the following parameters:
+
+\[
+\begin{align*}
+\pi & = \{.2,.2,.2,.4\}\\
+\mu & = \{0,4,8,16\}\\
+\sigma & = \{1,1,2,3\}
+\end{align*}
+\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+\ImportTok{from}\NormalTok{ numpy.random }\ImportTok{import}\NormalTok{ binomial, normal, beta, multinomial}
+\ImportTok{import}\NormalTok{ scipy.stats }\ImportTok{as}\NormalTok{ st}
+\ImportTok{from}\NormalTok{ scipy.stats }\ImportTok{import}\NormalTok{ invgamma, norm, dirichlet, multivariate\_normal}
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+\ImportTok{from}\NormalTok{ matplotlib.lines }\ImportTok{import}\NormalTok{ Line2D}
+\ImportTok{from}\NormalTok{ distcan }\ImportTok{import}\NormalTok{ InverseGamma}
+
+\KeywordTok{def}\NormalTok{ data\_gen(mu, sigmas, phi, n):}
+    \CommentTok{"""}
+\CommentTok{    Generates samples from Mixture of K Gaussian Distributions}
+\CommentTok{    """}
+\NormalTok{    y }\OperatorTok{=}\NormalTok{ []}
+    \ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(n):}
+\NormalTok{        ind }\OperatorTok{=}\NormalTok{ multinomial(}\DecValTok{1}\NormalTok{, phi)}
+        \ControlFlowTok{for}\NormalTok{ j, val }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(ind):}
+            \ControlFlowTok{if}\NormalTok{ val }\OperatorTok{==} \DecValTok{1}\NormalTok{:}
+\NormalTok{                y.append(norm(mu[j], sigmas[j]).rvs())}
+            \ControlFlowTok{else}\NormalTok{:}
+                \BuiltInTok{next}
+    \ControlFlowTok{return}\NormalTok{ np.array(y)}
+
+\CommentTok{\# Set Starting Parameters}
+\NormalTok{mu }\OperatorTok{=}\NormalTok{ [}\DecValTok{0}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{8}\NormalTok{,}\DecValTok{16}\NormalTok{]}
+\NormalTok{sigmas }\OperatorTok{=}\NormalTok{ [}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{]}
+\NormalTok{phi }\OperatorTok{=}\NormalTok{ [}\FloatTok{.2}\NormalTok{,}\FloatTok{.2}\NormalTok{,}\FloatTok{.2}\NormalTok{,}\FloatTok{.4}\NormalTok{]}
+\NormalTok{n }\OperatorTok{=} \DecValTok{2000}
+\NormalTok{y }\OperatorTok{=}\NormalTok{ data\_gen(mu}\OperatorTok{=}\NormalTok{mu, sigmas}\OperatorTok{=}\NormalTok{sigmas, phi}\OperatorTok{=}\NormalTok{phi, n}\OperatorTok{=}\NormalTok{n)}
+\NormalTok{x }\OperatorTok{=}\NormalTok{ np.linspace(}\OperatorTok{{-}}\DecValTok{3}\NormalTok{,}\DecValTok{25}\NormalTok{)}
+
+\CommentTok{\# Create Plot of Data }
+\NormalTok{plt.hist(y, }\DecValTok{30}\NormalTok{, density}\OperatorTok{=}\VariableTok{True}\NormalTok{, alpha}\OperatorTok{=}\FloatTok{0.5}\NormalTok{)}\OperatorTok{;}
+\NormalTok{plt.plot(x, norm(mu[}\DecValTok{0}\NormalTok{], sigmas[}\DecValTok{0}\NormalTok{]).pdf(x), color}\OperatorTok{=}\StringTok{"red"}\NormalTok{)}
+\NormalTok{plt.plot(x, norm(mu[}\DecValTok{1}\NormalTok{], sigmas[}\DecValTok{1}\NormalTok{]).pdf(x), color}\OperatorTok{=}\StringTok{"blue"}\NormalTok{)}
+\NormalTok{plt.plot(x, norm(mu[}\DecValTok{2}\NormalTok{], sigmas[}\DecValTok{2}\NormalTok{]).pdf(x), color}\OperatorTok{=}\StringTok{"green"}\NormalTok{)}
+\NormalTok{plt.plot(x, norm(mu[}\DecValTok{3}\NormalTok{], sigmas[}\DecValTok{3}\NormalTok{]).pdf(x), color}\OperatorTok{=}\StringTok{"yellow"}\NormalTok{)}
+\NormalTok{plt.title(}\StringTok{"Mixture of 2 Gaussians Data"}\NormalTok{)}
+\NormalTok{plt.grid()}
+\NormalTok{plt.savefig(}\StringTok{"mix2.png"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.75\linewidth,height=0.75\textheight]{mix2} \end{center}
+
+\hypertarget{the-dirichlet-distribution}{%
+\subsection{The Dirichlet
+Distribution}\label{the-dirichlet-distribution}}
+
+Now that we are sampling from more than 2 gaussians, we need a
+distribution to define over \(p(\pi)\) that generalizes to more than 2
+groups. Recall that when we were using \(K=2\), we had used the beta
+distribution. The multivariate generalization of the beta distribution
+is known as the Dirichlet distribution, often written as
+\(Dir(\pmb{\alpha})\) where \(\pmb{\alpha}\) is a vector of positive
+reals \protect\hyperlink{ref-wiki:dd}{Wikipedia}
+(\protect\hyperlink{ref-wiki:dd}{2021}). The full Dirichlet distribution
+is defined as:
+
+\[
+p(\pi_1, ..., \pi_k | \pmb{\alpha}) = \frac{\Gamma\left(\sum_{j=1}^K\alpha_j\right)}{\prod_{j=1}^k\Gamma(\alpha_j)}\prod_{j=1}^K\pi_j^{\alpha_j-1}
+\]
+
+We can generate samples from the Dirichlet Distribution with various
+parameters to better understand how the distribution works. The top left
+plot shows the case when \(\pmb{\alpha}\) is equal for all \(k\), but
+small. This results in the samples over each group to be pushed towards
+1 or 0. In the extreme, the samples of vector \(\pmb{\pi}\) has one
+group with \(\pi_j = 1\) and the rest with \(\pi_{\neg j} = 0\). In the
+other plots where \(\pmb{\alpha}\) is equal across all \(k\), we can see
+that increasing the magnitude of \(\pmb{\alpha}\) reduces the variance
+in the samples of \(\pmb{\pi}\) The last plot demonstrates how varying
+\(\alpha_j\) changes the mean of each \(\pi_j\) being sampled based on
+the proportions of \(\alpha_j\) compared to \(\alpha_{\neg j}\)
+
+\hypertarget{deriving-complete-conditional-of-pi}{%
+\subsection{\texorpdfstring{Deriving Complete Conditional of
+\(\pi\)}{Deriving Complete Conditional of \textbackslash pi}}\label{deriving-complete-conditional-of-pi}}
+
+Recall that in my last post, we set our prior distribution
+\(p(\pi) \sim Beta(\alpha = 1, \beta = 1)\). We were using the beta
+distribution to describe the probability of drawing from one of our
+Gaussian distributions. Now that we have expanded from \(K=2\) to
+\(K=4\), we simply replace this prior with
+\(p(\pi) \sim Dir(\pmb{\alpha} = \pmb{1})\). This gives us our full list
+of priors as follows:
+
+\[
+\begin{align*}
+p(\pmb{\pi}) & \sim Dir(\pmb{\alpha})\\
+p(\mu_j) & \sim N(\mu_0 = 0, \tau^2 = 1)\\
+p(\sigma_j^2) & \sim IG(\delta = 1, \psi = 1)
+\end{align*}
+\]
+
+We've already defined the posterior over \(\theta\) when \(K=2\) and
+\(p(\pi) \sim Beta(1,1)\). First we can examine the case when \(K=2\)
+and compare the changes to the case when \(K\) is larger and the
+Dirichlet distribution is required. I've highlighted the changes in
+green.
+
+\[
+\begin{align*}
+p(\theta|x,z) & \propto p(x, z| \theta)p(\pmb{\pi})\prod_{j=1}^k\left[p(\mu_j)p(\sigma_j^2)\right]\\
+& \propto \color{green}{\pi^{\sum_{i=1}^Nz_1}(1-\pi)^{\sum_{i=1}^Nz_2}} \prod_{i=1}^N\prod_{j=1}^K\phi_{\theta_j}(x_i)^{z_j}\prod_{j=1}^K\exp\left[-\frac{\mu_j^2}{2}\right]\left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]\\
+\end{align*}
+\]
+
+Now if we substitute \(Dir(\pmb{\alpha})\) for
+\(p(\pi) \sim Beta(1,1)\), we get:
+
+\[
+\begin{align*}
+p(\theta|x,z) & \propto p(x, z| \theta)p(\pi)\prod_{j=1}^k\left[p(\mu_j)p(\sigma_j^2)\right]\\
+& \propto \color{green}{\frac{\Gamma\left(\sum_{j=1}^K\alpha_j\right)}{\prod_{j=1}^k\Gamma(\alpha_j)}\prod_{j=1}^K\pi_j^{\alpha_j-1}\pi_j^{\sum_{i=1}^Nz_i}}\prod_{i=1}^N\prod_{j=1}^K\phi_{\theta_j}(x_i)^{z_j}\prod_{j=1}^K\exp\left[-\frac{\mu_j^2}{2}\right]\left(\sigma^2_j\right)^{-2}\exp\left[-\frac{1}{\sigma^2_j}\right]\\
+\end{align*}
+\]
+
+Now that we can isolate our variables to solve for the complete
+conditional of \(\pi\).
+
+\[
+\begin{align*}
+p(\pi|x, z, \pmb{\sigma}, \pmb{\mu}) & \propto \prod_{j=1}^K \pi_j^{\alpha_j - 1 + \sum_{i=1}^N z_i}\\
+p(\pi|x, z) & \sim Dir\left(\sum_{i=1}^Nz_1 + \alpha_1, ..., \sum_{i=1}^Nz_k + \alpha_k\right) 
+\end{align*}
+\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{def}\NormalTok{ update\_pi(alpha\_vec, z\_vec):}
+    \CommentTok{"""}
+\CommentTok{    Sample from Posterior Conditional for pi}
+\CommentTok{    """}
+    \ControlFlowTok{assert} \BuiltInTok{len}\NormalTok{(z\_vec) }\OperatorTok{==} \BuiltInTok{len}\NormalTok{(alpha\_vec), }\StringTok{"Number of distributions must equal number of parameters"}
+    \ControlFlowTok{return}\NormalTok{ dirichlet(z\_vec }\OperatorTok{+}\NormalTok{ alpha\_vec).rvs()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{complete-conditionals-for-pmbmu-pmbsigma}{%
+\subsection{\texorpdfstring{Complete Conditionals for \(\pmb{\mu}\),
+\(\pmb{\sigma}\)}{Complete Conditionals for \textbackslash pmb\{\textbackslash mu\}, \textbackslash pmb\{\textbackslash sigma\}}}\label{complete-conditionals-for-pmbmu-pmbsigma}}
+
+The complete conditionals for \(\pmb{\mu}\) and \(\pmb{\sigma}\) remain
+the same as the \(k=2\) example:
+
+\[
+\begin{align*}
+p(\mu | x, z, \pmb{\sigma}, \pmb{\pi}) \sim N \left(\frac{\tilde{x_j}}{n_j + 1}, \frac{\sigma^2_j}{n_j + 1}\right)\\
+\end{align*}
+\]
+
+Notice that in the code we sample from a multivariate normal with the
+variances on the diagonal. This is purely to speed up the calculations
+and equivalent to the statement above.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{def}\NormalTok{ update\_mu(y, z\_mat, sigma\_vec):}
+    \CommentTok{"""}
+\CommentTok{    Sample from Posterior Conditional for mu}
+\CommentTok{    """}
+\NormalTok{    mu\_vec }\OperatorTok{=}\NormalTok{ []}
+\NormalTok{    n\_j }\OperatorTok{=}\NormalTok{  np.}\BuiltInTok{sum}\NormalTok{(z\_mat, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+    \ControlFlowTok{for}\NormalTok{ j }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\BuiltInTok{len}\NormalTok{(sigma\_vec)):}
+\NormalTok{        sigma\_vec[j] }\OperatorTok{=}\NormalTok{ sigma\_vec[j] }\OperatorTok{/}\NormalTok{ (n\_j[j] }\OperatorTok{+} \DecValTok{1}\NormalTok{)}
+\NormalTok{        mu\_vec.append(np.}\BuiltInTok{sum}\NormalTok{(y }\OperatorTok{*}\NormalTok{ z\_mat[:,j]) }\OperatorTok{/}\NormalTok{ (n\_j[j] }\OperatorTok{+} \DecValTok{1}\NormalTok{))}
+    
+\NormalTok{    cov }\OperatorTok{=}\NormalTok{ np.diag(sigma\_vec)}
+    \ControlFlowTok{return}\NormalTok{ multivariate\_normal(mu\_vec, cov).rvs()}
+\end{Highlighting}
+\end{Shaded}
+
+Moving on to \(\sigma^2\):
+
+\[
+\begin{align*}
+p(\mu|x, z, \pmb{\sigma}, \pmb{\pi}) & \sim IG\left(\frac{1}{2}n_j + 1, 1 + \frac{1}{2}\sum_{i=1}^N(x-\mu_j)^2\right)
+\end{align*}
+\]
+
+\protect\hyperlink{ref-peng2021}{Peng}
+(\protect\hyperlink{ref-peng2021}{2021})
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{def}\NormalTok{ update\_sigma(data, z\_mat, mu):}
+    \CommentTok{"""}
+\CommentTok{    Sample from Posterior Conditional for sigma}
+\CommentTok{    """}
+\NormalTok{    n\_j }\OperatorTok{=}\NormalTok{ np.}\BuiltInTok{sum}\NormalTok{(z\_mat, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+\NormalTok{    alpha }\OperatorTok{=}\NormalTok{ (}\FloatTok{0.5} \OperatorTok{*}\NormalTok{ n\_j) }\OperatorTok{+} \DecValTok{1}
+\NormalTok{    beta }\OperatorTok{=}\NormalTok{ []}
+    \ControlFlowTok{for}\NormalTok{ j }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\BuiltInTok{len}\NormalTok{(mu)):}
+\NormalTok{        y }\OperatorTok{=}\NormalTok{ data }\OperatorTok{*}\NormalTok{ z\_mat[:,j]}
+\NormalTok{        y }\OperatorTok{=}\NormalTok{ y[y }\OperatorTok{!=} \DecValTok{0}\NormalTok{]}
+\NormalTok{        beta.append((}\FloatTok{0.5} \OperatorTok{*}\NormalTok{ np.square(y }\OperatorTok{{-}}\NormalTok{ mu[j]).}\BuiltInTok{sum}\NormalTok{()) }\OperatorTok{+} \DecValTok{1}\NormalTok{)}
+    \ControlFlowTok{return}\NormalTok{ InverseGamma(alpha, beta).rvs()}
+\end{Highlighting}
+\end{Shaded}
+
+The updates for each \(z_{i,j}\) is also still the same:
+
+\[ 
+\begin{align*} 
+p(z|\theta,x) & = \frac{\pi_j\phi_{\theta_1}(x_i)}{\sum_{j=1}^K\pi_j\phi_{\theta_j}(x_i)}
+\end{align*} 
+\]
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{def}\NormalTok{ update\_z(data: }\BuiltInTok{list}\NormalTok{, mu, sigma, pi):}
+    \CommentTok{"""}
+\CommentTok{    Sample from latent variable Z according to likelihoods for class assignment}
+\CommentTok{    """}
+\NormalTok{    a }\OperatorTok{=}\NormalTok{ np.empty((}\BuiltInTok{len}\NormalTok{(data), }\BuiltInTok{len}\NormalTok{(mu)))}
+\NormalTok{    out }\OperatorTok{=}\NormalTok{ np.empty((}\BuiltInTok{len}\NormalTok{(data), }\BuiltInTok{len}\NormalTok{(mu)))}
+    \ControlFlowTok{for}\NormalTok{ j }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\BuiltInTok{len}\NormalTok{(mu)):}
+\NormalTok{        a[:,j] }\OperatorTok{=}\NormalTok{ norm(mu[j], np.sqrt(sigma[j])).pdf(data) }\OperatorTok{*}\NormalTok{ pi[}\DecValTok{0}\NormalTok{,j]}
+    
+\NormalTok{    pi\_i }\OperatorTok{=}\NormalTok{ a }\OperatorTok{/}\NormalTok{ np.}\BuiltInTok{sum}\NormalTok{(a, axis}\OperatorTok{=}\DecValTok{1}\NormalTok{)[:,}\VariableTok{None}\NormalTok{]}
+    \ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\BuiltInTok{len}\NormalTok{(data)):}
+\NormalTok{        out[i,] }\OperatorTok{=}\NormalTok{ multinomial(}\DecValTok{1}\NormalTok{, pi\_i[i,:])}
+    \ControlFlowTok{return}\NormalTok{ out}
+\end{Highlighting}
+\end{Shaded}
+
+Finally, the Gibbs algorithm is the same with minor code differences to
+account for the changes in parameters and data structures
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{def}\NormalTok{ gibbs(data, iters, burnin, k):}
+    \CommentTok{"""}
+\CommentTok{    Run Gibb\textquotesingle{}s Sampling for Mixture of 2 Gaussians. Initial States are sample from Priors}
+\CommentTok{    """}
+    \CommentTok{\# Set initial guesses based on priors}
+\NormalTok{    alpha }\OperatorTok{=}\NormalTok{ [}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{]}
+\NormalTok{    mu }\OperatorTok{=}\NormalTok{ normal(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, size}\OperatorTok{=}\NormalTok{k)}
+\NormalTok{    pi }\OperatorTok{=}\NormalTok{ dirichlet(alpha).rvs()}
+\NormalTok{    sigma }\OperatorTok{=}\NormalTok{ InverseGamma(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{).rvs(size}\OperatorTok{=}\NormalTok{k)}
+\NormalTok{    out }\OperatorTok{=}\NormalTok{ np.empty((iters, k}\OperatorTok{*}\DecValTok{3}\NormalTok{))}
+
+    \ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(iters):}
+        \CommentTok{\# Update Parameters according to conditional posterior distributions}
+\NormalTok{        z\_mat }\OperatorTok{=}\NormalTok{ update\_z(data, mu, sigma, pi)}
+\NormalTok{        pi }\OperatorTok{=}\NormalTok{ update\_pi(alpha, np.}\BuiltInTok{sum}\NormalTok{(z\_mat, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{))}
+\NormalTok{        mu }\OperatorTok{=}\NormalTok{ update\_mu(data, z\_mat, sigma)}
+\NormalTok{        sigma }\OperatorTok{=}\NormalTok{ update\_sigma(data, z\_mat, mu)}
+
+        \CommentTok{\# Store Values to monitor trace}
+\NormalTok{        out[i, }\DecValTok{0}\NormalTok{:}\DecValTok{4}\NormalTok{] }\OperatorTok{=}\NormalTok{ mu}
+\NormalTok{        out[i, }\DecValTok{4}\NormalTok{:}\DecValTok{8}\NormalTok{] }\OperatorTok{=}\NormalTok{ np.sqrt(sigma)}
+\NormalTok{        out[i, }\DecValTok{8}\NormalTok{:}\DecValTok{12}\NormalTok{] }\OperatorTok{=}\NormalTok{ pi[}\DecValTok{0}\NormalTok{,:]}
+    
+    \ControlFlowTok{return}\NormalTok{ out[burnin:,:]}
+
+\CommentTok{\# Fit the model and extract parameters}
+\NormalTok{trace }\OperatorTok{=}\NormalTok{ gibbs(y, }\DecValTok{2000}\NormalTok{, }\DecValTok{500}\NormalTok{, }\DecValTok{4}\NormalTok{)}
+\NormalTok{params\_dict }\OperatorTok{=}\NormalTok{ \{\}}
+\ControlFlowTok{for}\NormalTok{ j }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\BuiltInTok{len}\NormalTok{(mu)):}
+\NormalTok{    params\_dict.update(}
+\NormalTok{        \{}
+            \SpecialStringTok{f"mu}\SpecialCharTok{\{j\}}\SpecialStringTok{"}\NormalTok{: np.}\BuiltInTok{round}\NormalTok{(np.mean(trace[:,j]),}\DecValTok{2}\NormalTok{),}
+            \SpecialStringTok{f"sigma}\SpecialCharTok{\{j\}}\SpecialStringTok{"}\NormalTok{: np.}\BuiltInTok{round}\NormalTok{(np.mean(trace[:,j}\OperatorTok{+}\DecValTok{4}\NormalTok{]),}\DecValTok{2}\NormalTok{),}
+            \SpecialStringTok{f"pi}\SpecialCharTok{\{j\}}\SpecialStringTok{"}\NormalTok{: np.}\BuiltInTok{round}\NormalTok{(np.mean(trace[:,j}\OperatorTok{+}\DecValTok{8}\NormalTok{]),}\DecValTok{2}\NormalTok{)}
+\NormalTok{        \}}
+\NormalTok{    )}
+
+\NormalTok{x }\OperatorTok{=}\NormalTok{ np.linspace(}\OperatorTok{{-}}\DecValTok{3}\NormalTok{,}\DecValTok{25}\NormalTok{, }\DecValTok{500}\NormalTok{)}
+\NormalTok{plt.hist(y, }\DecValTok{30}\NormalTok{, density}\OperatorTok{=}\VariableTok{True}\NormalTok{, alpha}\OperatorTok{=}\FloatTok{0.5}\NormalTok{)}\OperatorTok{;}
+\ControlFlowTok{for}\NormalTok{ j }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\BuiltInTok{len}\NormalTok{(mu)):}
+\NormalTok{    plt.plot(x, norm(mu[j], sigmas[j]).pdf(x), color}\OperatorTok{=}\StringTok{"red"}\NormalTok{)}
+\NormalTok{    plt.plot(x, norm(params\_dict[}\SpecialStringTok{f"mu}\SpecialCharTok{\{j\}}\SpecialStringTok{"}\NormalTok{], params\_dict[}\SpecialStringTok{f"sigma}\SpecialCharTok{\{j\}}\SpecialStringTok{"}\NormalTok{]).pdf(x), color}\OperatorTok{=}\StringTok{"blue"}\NormalTok{)}
+\NormalTok{plt.title(}\SpecialStringTok{f"Mixture of 4 Gaussians | }\SpecialCharTok{\{n\}}\SpecialStringTok{ Iterations"}\NormalTok{)}
+\NormalTok{legend\_elements }\OperatorTok{=}\NormalTok{ [}
+\NormalTok{    Line2D([}\DecValTok{0}\NormalTok{], [}\DecValTok{0}\NormalTok{], color}\OperatorTok{=}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{, lw}\OperatorTok{=}\DecValTok{4}\NormalTok{, label}\OperatorTok{=}\StringTok{\textquotesingle{}Fitted\textquotesingle{}}\NormalTok{),}
+\NormalTok{    Line2D([}\DecValTok{0}\NormalTok{], [}\DecValTok{0}\NormalTok{], color}\OperatorTok{=}\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{, lw}\OperatorTok{=}\DecValTok{4}\NormalTok{, label}\OperatorTok{=}\StringTok{\textquotesingle{}Actual\textquotesingle{}}\NormalTok{)}
+\NormalTok{] }
+\NormalTok{plt.legend(handles}\OperatorTok{=}\NormalTok{legend\_elements, loc}\OperatorTok{=}\StringTok{"upper right"}\NormalTok{)}
+\NormalTok{plt.grid()}
+\NormalTok{plt.savefig(}\StringTok{"mix4.png"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.75\linewidth,height=0.75\textheight]{mix4} \end{center}
+
+And one of the largest benefits of fitting the parameters using bayesian
+methods is that we can plot the full posterior distributions over
+\(\theta\), giving us uncertainty in our fit as well as our point
+estimates. The full posteriors can be plotted as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fig, axs }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{12}\NormalTok{,}\DecValTok{2}\NormalTok{)}
+\NormalTok{x }\OperatorTok{=} \BuiltInTok{range}\NormalTok{(trace.shape[}\DecValTok{0}\NormalTok{])}
+\NormalTok{params }\OperatorTok{=}\NormalTok{ [}\StringTok{"mu1"}\NormalTok{, }\StringTok{"mu2"}\NormalTok{, }\StringTok{"mu3"}\NormalTok{, }\StringTok{"mu4"}\NormalTok{, }\StringTok{"sigma1"}\NormalTok{, }\StringTok{"sigma2"}\NormalTok{, }\StringTok{"sigma3"}\NormalTok{, }\StringTok{"sigma4"}\NormalTok{, }\StringTok{"pi1"}\NormalTok{, }\StringTok{"pi2"}\NormalTok{, }\StringTok{"pi3"}\NormalTok{, }\StringTok{"pi4"}\NormalTok{]}
+\ControlFlowTok{for}\NormalTok{ i, v }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(params):}
+\NormalTok{    y }\OperatorTok{=}\NormalTok{ trace[:,i]}
+\NormalTok{    axs[i,}\DecValTok{0}\NormalTok{].plot(x, y)}
+\NormalTok{    axs[i,}\DecValTok{0}\NormalTok{].set\_title(v)}
+\NormalTok{    axs[i,}\DecValTok{1}\NormalTok{].hist(y, }\DecValTok{30}\NormalTok{, density}\OperatorTok{=}\VariableTok{True}\NormalTok{, alpha}\OperatorTok{=}\FloatTok{0.5}\NormalTok{)}\OperatorTok{;}
+\NormalTok{    axs[i,}\DecValTok{1}\NormalTok{].set\_title(v)}
+\NormalTok{    axs[i,}\DecValTok{0}\NormalTok{].grid()}
+\NormalTok{    axs[i,}\DecValTok{1}\NormalTok{].grid()}
+
+\NormalTok{fig.suptitle(}\StringTok{"Trace of Parameters"}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{25}\NormalTok{)}
+\NormalTok{fig.set\_figheight(}\DecValTok{20}\NormalTok{)}
+\NormalTok{fig.set\_figwidth(}\DecValTok{15}\NormalTok{)}
+\NormalTok{fig.subplots\_adjust(hspace}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{fig.savefig(}\StringTok{"trace\_plot.png"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=1\linewidth,height=1\textheight]{trace_plot} \end{center}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\hypertarget{ref-peng2021}{}%
+Peng, Roger D. 2021. \emph{Advanced Statistical
+Computing}.\href{\%20https://bookdown.org/rdpeng/advstatcomp/\%20}{ https://bookdown.org/rdpeng/advstatcomp/}.
+
+\leavevmode\hypertarget{ref-wiki:dd}{}%
+Wikipedia. 2021. {``{Dirichlet distribution} --- {W}ikipedia{,} the Free
+Encyclopedia.''}
+\url{http://en.wikipedia.org/w/index.php?title=Dirichlet\%20distribution\&oldid=1048959256}.
+
+\end{CSLReferences}
+
+\end{document}
