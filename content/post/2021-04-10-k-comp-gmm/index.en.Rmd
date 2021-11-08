@@ -119,7 +119,7 @@ fig.suptitle("Dirichlet Distribution Samples", fontsize=15)
 ```
 
 ```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
-knitr::include_graphics("dp.png")
+#knitr::include_graphics("dp.png")
 ```
 
 
