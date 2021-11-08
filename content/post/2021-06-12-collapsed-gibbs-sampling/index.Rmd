@@ -19,6 +19,7 @@ In this post I'm going to discuss collapsed gibbs sampling and how we can apply 
 # Collapsed Gibbs
 
 Collapsed gibbs sampling is similar to regular gibbs sampling except that we are going to integrate out $\mu$, $\Sigma$, and $\pi$ which allows us to reduce the number of sampling procedures required. It can also be shown that collapsed gibbs sampling will converge more efficiently in the MCMC chain. The reasons for this are beyond the scope of this post, but we might add another post later focusing on this topic. Looking back at our GMM from other posts, we know that we chose $p(\pi|\alpha)$ and $p(\mu,\Sigma| \beta)$ to be conjugate so we are actually able to integrate them out and only sample from $p(z|z_{\neg i},\beta,\alpha)$. Here we're using the notation $z_{\neg i}$ to denote the vector $z$ after removing $z_i$. Kamper (2013) shows that:
+
 $$
 \begin{align*}
 p(z_i=k|z_{\neg i},\mathcal{D},\beta,\alpha) & \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)
