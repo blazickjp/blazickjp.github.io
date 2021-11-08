@@ -1,0 +1,423 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Collapsed Gibbs Sampling and DPGMM},
+  pdfauthor={Josepg Blazick},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Collapsed Gibbs Sampling and DPGMM}
+\author{Josepg Blazick}
+\date{2021-06-12}
+
+\begin{document}
+\maketitle
+
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+In this post I'm going to discuss collapsed gibbs sampling and how we
+can apply it to our Gaussian Mixture Model to model an Infinite Gaussian
+Mixture Model, also known as the Dirichlet Process Gaussian Mixture
+Model or DPGMM. The name is derived because we place a Dirichlet Process
+prior on the number of components allowing the number of components to
+be derived from the data instead of relying on the user to guess the
+correct number of components.
+
+\hypertarget{collapsed-gibbs}{%
+\section{Collapsed Gibbs}\label{collapsed-gibbs}}
+
+Collapsed gibbs sampling is similar to regular gibbs sampling except
+that we are going to integrate out \(\mu\), \(\Sigma\), and \(\pi\)
+which allows us to reduce the number of sampling procedures required. It
+can also be shown that collapsed gibbs sampling will converge more
+efficiently in the MCMC chain. The reasons for this are beyond the scope
+of this post, but we might add another post later focusing on this
+topic. Looking back at our GMM from other posts, we know that we chose
+\(p(\pi|\alpha)\) and \(p(\mu,\Sigma| \beta)\) to be conjugate so we are
+actually able to integrate them out and only sample from
+\(p(z|z_{\neg i},\beta,\alpha)\). Here we're using the notation
+\(z_{\neg i}\) to denote the vector \(z\) after removing \(z_i\). Kamper
+(2013) shows that: \[
+\begin{align*}
+p(z_i=k|z_{\neg i},\mathcal{D},\beta,\alpha) & \propto p(z_i=k|\alpha)p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)
+\end{align*}
+\] We can start by breakup up the right hand side of the statement and
+by focusing on the first term. Here we only need to integrate out
+\(\pi\) from \(p(z_i=k|\alpha)\).
+
+\[
+\begin{align*}
+p(z_i = k|\alpha) & = \int_{\pi}p(z|\pi)p(\pi|\alpha)d\pi\\
+& = \int_{\pi}\prod_{k=1}^K\pi_k^{N_k}\frac{1}{B(\alpha)}\prod_{k=1}^Kx_k^{\alpha_k -1}d\pi\\
+& = \frac{1}{B(\alpha)}\int_{\pi}\prod_{k=1}^K\pi_k^{N_k+\alpha_k -1}d\pi\\
+\end{align*}
+\] We can recognize that \(\pi_k^{N_k+\alpha_k -1}d\pi\) as the
+un-normalized Dirichlet distribution. Taking advantage of this fact we
+can show that for any un-normalized probability distribution \(D\),
+\(\int D = \frac{1}{C}\) where \(C\) is the normalizing constant of the
+distribution. Therefore,
+
+\[
+\begin{align*}
+p(z|\alpha) & = \frac{\Gamma(\alpha)}{\Gamma(N+\alpha)}\prod_{k=1}^K\frac{\Gamma\left(N_K + \frac{\alpha}{k}\right)}{\Gamma\left(\frac{\alpha}{k}\right)}
+\end{align*}
+\] Now we can work to get this in the form that we want, which is as
+follows: \[
+\begin{align*}
+p(z_i =k | z_{\neg i}, \alpha) & = \frac{p(z_i =k, z_{\neg i} | \alpha)}{p(z_{\neg i}| \alpha)}\\
+& = \frac{p(z_i = k | \alpha)}{p(z_{\neg i}| \alpha)}\\
+& = \frac{N_{k \neg i} + \frac{\alpha}{k}}{N+\alpha - 1}
+\end{align*}
+\] Next we can turn our attention to
+\(p(x_i|\mathcal{D}_{\neg i},z_i = k,z_{\neg i}\beta)\) where \(\beta\)
+represents the parameters to the Normal Inverse Wishart distribution.
+Using {[}1, p.843{]} we get:
+
+\[
+\begin{align*}
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = p(x_i|\mathcal{D}_{k\neg i},\beta)\\
+& = \frac{p(x_i,\mathcal{D}_{k\neg i}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}\\
+& = \frac{p(\mathcal{D}_{k}|\beta)}{p(\mathcal{D}_{k\neg i}|\beta)}
+\end{align*}
+\]
+
+Which is equivalent to the posterior predictive distribution given by:
+
+\[
+\begin{align*}
+p(x_i|\mathcal{D}_{k\neg i},z_i = k,z_{\neg i}\beta) & = \mathcal{T}\left(x_i|\mu_o,\frac{\kappa_n+1}{\kappa_n(v_n - D+1)}S_n, v_n - D + 1\right)
+\end{align*}
+\] Now that we have everything that we need, we can formally write out
+the collapsed gibbs algorithm as follows:
+
+Now let's use the same data as from prior posts and solve the finite GMM
+case when \(k=3\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+\ImportTok{from}\NormalTok{ numpy.random }\ImportTok{import}\NormalTok{ multinomial}
+\ImportTok{from}\NormalTok{ scipy.stats }\ImportTok{import}\NormalTok{ dirichlet, multivariate\_t, multivariate\_normal}
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+\ImportTok{from}\NormalTok{ matplotlib.lines }\ImportTok{import}\NormalTok{ Line2D}
+\ImportTok{import}\NormalTok{ pandas }\ImportTok{as}\NormalTok{ pd}
+
+\CommentTok{\# Define parameters for K=3 Mixture of Multivariate Gaussians}
+\NormalTok{phi }\OperatorTok{=}\NormalTok{ [}\FloatTok{.3}\NormalTok{, }\FloatTok{.5}\NormalTok{, }\FloatTok{.2}\NormalTok{]}
+\NormalTok{mu }\OperatorTok{=}\NormalTok{ np.array([[}\DecValTok{13}\NormalTok{,}\DecValTok{5}\NormalTok{], [}\DecValTok{0}\NormalTok{,}\OperatorTok{{-}}\DecValTok{2}\NormalTok{], [}\OperatorTok{{-}}\DecValTok{14}\NormalTok{,}\DecValTok{3}\NormalTok{]])}
+\NormalTok{cov\_1 }\OperatorTok{=}\NormalTok{ np.array([[}\FloatTok{2.0}\NormalTok{, }\FloatTok{0.3}\NormalTok{], [}\FloatTok{0.3}\NormalTok{, }\FloatTok{0.5}\NormalTok{]])}
+\NormalTok{cov\_2 }\OperatorTok{=}\NormalTok{ np.array([[}\FloatTok{3.0}\NormalTok{,}\FloatTok{.4}\NormalTok{], [}\FloatTok{.4}\NormalTok{,}\FloatTok{3.0}\NormalTok{]])    }
+\NormalTok{cov\_3 }\OperatorTok{=}\NormalTok{ np.array([[}\FloatTok{1.7}\NormalTok{,}\OperatorTok{{-}}\FloatTok{.7}\NormalTok{], [}\OperatorTok{{-}}\FloatTok{.7}\NormalTok{,}\FloatTok{1.7}\NormalTok{]])}
+\NormalTok{cov }\OperatorTok{=}\NormalTok{ np.stack((cov\_1, cov\_2, cov\_3), axis }\OperatorTok{=} \DecValTok{0}\NormalTok{)}
+
+\KeywordTok{def}\NormalTok{ data\_gen(mu, cov, phi, n):}
+    \CommentTok{"""}
+\CommentTok{    Generates samples from Mixture of K Multivariate Gaussian Distributions}
+\CommentTok{    """}
+\NormalTok{    y }\OperatorTok{=}\NormalTok{ np.empty((n, }\DecValTok{2}\NormalTok{))}
+\NormalTok{    z }\OperatorTok{=}\NormalTok{ []}
+    \ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(n):}
+\NormalTok{        ind }\OperatorTok{=}\NormalTok{ multinomial(}\DecValTok{1}\NormalTok{, phi)}
+        \ControlFlowTok{for}\NormalTok{ j, val }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(ind):}
+            \ControlFlowTok{if}\NormalTok{ val }\OperatorTok{==} \DecValTok{1}\NormalTok{:}
+\NormalTok{                z.append(j)}
+\NormalTok{                y[i,:] }\OperatorTok{=}\NormalTok{ np.random.multivariate\_normal(mu[j,:], cov[j,:,:])}
+            \ControlFlowTok{else}\NormalTok{:}
+                \BuiltInTok{next}
+    \ControlFlowTok{return}\NormalTok{ np.array(y), z}
+  
+\NormalTok{data, z }\OperatorTok{=}\NormalTok{ data\_gen(mu, cov, phi, }\DecValTok{500}\NormalTok{)}
+\NormalTok{x, y }\OperatorTok{=}\NormalTok{ np.mgrid[}\OperatorTok{{-}}\DecValTok{17}\NormalTok{:}\FloatTok{17.5}\NormalTok{:}\FloatTok{.1}\NormalTok{, }\OperatorTok{{-}}\DecValTok{7}\NormalTok{:}\FloatTok{7.5}\NormalTok{:}\FloatTok{.1}\NormalTok{]}
+\NormalTok{pos }\OperatorTok{=}\NormalTok{ np.dstack((x,y))}
+
+\NormalTok{fig, ax }\OperatorTok{=}\NormalTok{ plt.subplots()}
+\NormalTok{ax.scatter(data[:,}\DecValTok{0}\NormalTok{], data[:,}\DecValTok{1}\NormalTok{], alpha }\OperatorTok{=} \FloatTok{.6}\NormalTok{)}\OperatorTok{;}
+\ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\DecValTok{3}\NormalTok{):}
+\NormalTok{    ax.contour(x,y, multivariate\_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend}\OperatorTok{=}\StringTok{\textquotesingle{}both\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
+
+
+\NormalTok{fig.suptitle(}\StringTok{"K=3 GMM"}\NormalTok{)}
+\NormalTok{ax.grid()}
+\NormalTok{fig.savefig(}\StringTok{"data\_plot.png"}\NormalTok{)}
+\NormalTok{plt.close(fig)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.75\linewidth,height=0.75\textheight]{data_plot} \end{center}
+
+And now we create our code for the collapsed gibbs sampler and fit it to
+our data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\KeywordTok{def}\NormalTok{ collapsed\_gibbs(data, a, v, K, iters }\OperatorTok{=} \DecValTok{500}\NormalTok{):}
+\NormalTok{    N }\OperatorTok{=}\NormalTok{ data.shape[}\DecValTok{0}\NormalTok{]}
+\NormalTok{    D }\OperatorTok{=}\NormalTok{ data.shape[}\DecValTok{1}\NormalTok{]}
+    \ControlFlowTok{assert}\NormalTok{ v }\OperatorTok{\textgreater{}}\NormalTok{ D}\OperatorTok{{-}}\DecValTok{1}\NormalTok{, }\StringTok{"v must be greater than D{-}1"}
+\NormalTok{    alpha }\OperatorTok{=}\NormalTok{ np.repeat(a, K)}
+\NormalTok{    z }\OperatorTok{=}\NormalTok{ np.random.choice(K, size }\OperatorTok{=}\NormalTok{ N, replace }\OperatorTok{=} \VariableTok{True}\NormalTok{, p }\OperatorTok{=}\NormalTok{dirichlet(alpha }\OperatorTok{/}\NormalTok{ K).rvs().squeeze())}
+    \ControlFlowTok{for}\NormalTok{ \_ }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(iters):}
+        \ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(N):}
+            \CommentTok{\# Remove x\_i from data and Z}
+\NormalTok{            d2 }\OperatorTok{=}\NormalTok{ np.delete(data, i, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+\NormalTok{            z2 }\OperatorTok{=}\NormalTok{ np.delete(z, i, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+\NormalTok{            p\_z }\OperatorTok{=}\NormalTok{ []}
+            \ControlFlowTok{for}\NormalTok{ k }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(K):}
+\NormalTok{                mu\_k }\OperatorTok{=}\NormalTok{ np.mean(d2[z2 }\OperatorTok{==}\NormalTok{ k], axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+                \CommentTok{\# cov\_k = np.cov(d2[z2 == k], rowvar=False)}
+\NormalTok{                n\_k }\OperatorTok{=}\NormalTok{ np.}\BuiltInTok{sum}\NormalTok{(z2 }\OperatorTok{==}\NormalTok{ k)}
+\NormalTok{                p\_z\_k }\OperatorTok{=}\NormalTok{ (n\_k }\OperatorTok{+}\NormalTok{ a}\OperatorTok{/}\NormalTok{K) }\OperatorTok{/}\NormalTok{ (N }\OperatorTok{+}\NormalTok{ a }\OperatorTok{{-}} \DecValTok{1}\NormalTok{)}
+\NormalTok{                S\_k }\OperatorTok{=}\NormalTok{ np.dot(np.transpose(d2[z2 }\OperatorTok{==}\NormalTok{ k] }\OperatorTok{{-}}\NormalTok{ mu\_k), d2[z2 }\OperatorTok{==}\NormalTok{ k] }\OperatorTok{{-}}\NormalTok{ mu\_k) }\OperatorTok{+}\NormalTok{ np.eye(D)}
+\NormalTok{                p\_x\_i }\OperatorTok{=}\NormalTok{ multivariate\_t(mu\_k, ((n\_k}\OperatorTok{+}\DecValTok{1}\NormalTok{) }\OperatorTok{/}\NormalTok{ (n\_k }\OperatorTok{*}\NormalTok{(n\_k }\OperatorTok{+}\NormalTok{ v }\OperatorTok{{-}}\NormalTok{ D }\OperatorTok{+} \DecValTok{1}\NormalTok{)))}\OperatorTok{*}\NormalTok{S\_k, n\_k}\OperatorTok{+}\NormalTok{v }\OperatorTok{{-}}\NormalTok{ D }\OperatorTok{+} \DecValTok{1}\NormalTok{).pdf(data[i,])}
+\NormalTok{                p\_z\_k }\OperatorTok{=}\NormalTok{ p\_z\_k }\OperatorTok{*}\NormalTok{ p\_x\_i}
+\NormalTok{                p\_z.append(p\_z\_k)}
+            \CommentTok{\# Standardize prob vector p(z\_i = k)}
+\NormalTok{            p\_z }\OperatorTok{=}\NormalTok{ p\_z }\OperatorTok{/}\NormalTok{ np.}\BuiltInTok{sum}\NormalTok{(p\_z)}
+\NormalTok{            z[i] }\OperatorTok{=}\NormalTok{ np.random.choice(K, }\DecValTok{1}\NormalTok{, replace}\OperatorTok{=}\VariableTok{True}\NormalTok{, p }\OperatorTok{=}\NormalTok{ p\_z)}
+
+    \ControlFlowTok{return}\NormalTok{ z}
+
+\NormalTok{z\_pred }\OperatorTok{=}\NormalTok{ collapsed\_gibbs(data, }\DecValTok{5}\NormalTok{, }\DecValTok{2}\NormalTok{, K}\OperatorTok{=}\DecValTok{3}\NormalTok{, iters}\OperatorTok{=}\DecValTok{20}\NormalTok{)}
+
+\NormalTok{fig, ax }\OperatorTok{=}\NormalTok{ plt.subplots()}
+\NormalTok{cols }\OperatorTok{=}\NormalTok{ [}\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{, }\StringTok{"green"}\NormalTok{]}
+\ControlFlowTok{for}\NormalTok{ i, v }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(cols):}
+\NormalTok{    d2 }\OperatorTok{=}\NormalTok{ data[np.array(z\_pred) }\OperatorTok{==}\NormalTok{ i,:]}
+\NormalTok{    ax.scatter(d2[:,}\DecValTok{0}\NormalTok{], d2[:,}\DecValTok{1}\NormalTok{], color}\OperatorTok{=}\NormalTok{v, alpha }\OperatorTok{=} \FloatTok{.6}\NormalTok{)}\OperatorTok{;}
+\NormalTok{    ax.contour(x,y, multivariate\_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend}\OperatorTok{=}\StringTok{\textquotesingle{}both\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
+
+
+\NormalTok{fig.suptitle(}\StringTok{"Collapsed Gibbs for Finite GMM"}\NormalTok{)}
+\NormalTok{ax.grid()}
+\NormalTok{fig.savefig(}\StringTok{"collapsed\_gibbs.png"}\NormalTok{)}
+\NormalTok{plt.close(fig)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.75\linewidth,height=0.75\textheight]{collapsed_gibbs} \end{center}
+
+\hypertarget{extending-to-the-infinite-gmm}{%
+\subsection{Extending to the Infinite
+GMM}\label{extending-to-the-infinite-gmm}}
+
+Extending our existing model to the case with infinite clusters is
+rather straight forward from here. In my last post I discuss the
+Dirichlet Process and how you can model an infinite probability vector
+using the Chinese Restaurant Process.
+
+Earlier we showed that,
+
+\[
+\begin{align*}
+p(z_i =k | z_{\neg i}, \alpha) & = \frac{N_{k \neg i} + \frac{\alpha}{k}}{N+\alpha - 1}
+\end{align*}
+\] In the case of infinite \(K\) we end up with a CRP where:
+
+\[
+\begin{align*}
+p(z_i =k | z_{\neg i}, \alpha) & = \left\{
+\begin{array}{ll}
+      \frac{N_{k \neg i}}{N+\alpha - 1}  & \text{if}\;\;\; N_k > 0\\
+      \frac{\alpha}{N+\alpha - 1}  & \text{Otherwise}\\
+\end{array} 
+\right. \\
+\end{align*}
+\] Everything else is the same as the finite GMM giving the following
+Algorithm,
+
+Now we can create the code for our Infinite GMM Gibbs Sampler.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{def}\NormalTok{ collapsed\_gibbs\_IGMM(data, a, v, K, iters }\OperatorTok{=} \DecValTok{500}\NormalTok{):}
+\NormalTok{    N }\OperatorTok{=}\NormalTok{ data.shape[}\DecValTok{0}\NormalTok{]}
+\NormalTok{    D }\OperatorTok{=}\NormalTok{ data.shape[}\DecValTok{1}\NormalTok{]}
+    \ControlFlowTok{assert}\NormalTok{ v }\OperatorTok{\textgreater{}}\NormalTok{ D}\OperatorTok{{-}}\DecValTok{1}\NormalTok{, }\StringTok{"v must be greater than D{-}1"}
+\NormalTok{    alpha }\OperatorTok{=}\NormalTok{ np.repeat(a, K)}
+\NormalTok{    z }\OperatorTok{=}\NormalTok{ np.random.choice(K, size }\OperatorTok{=}\NormalTok{ N, replace }\OperatorTok{=} \VariableTok{True}\NormalTok{, p }\OperatorTok{=}\NormalTok{dirichlet(alpha }\OperatorTok{/}\NormalTok{ K).rvs().squeeze())}
+\NormalTok{    df }\OperatorTok{=}\NormalTok{ pd.DataFrame(\{}\StringTok{"k"}\NormalTok{: z, }\StringTok{"p\_z"}\NormalTok{: np.nan\})}
+\NormalTok{    g\_not }\OperatorTok{=}\NormalTok{ []}
+    \ControlFlowTok{for}\NormalTok{ q }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(iters):}
+        \ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(N):}
+\NormalTok{            groups }\OperatorTok{=} \BuiltInTok{list}\NormalTok{(np.unique(z))}
+            \CommentTok{\# Remove x\_i from data and Z}
+\NormalTok{            d2 }\OperatorTok{=}\NormalTok{ np.delete(data, i, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+\NormalTok{            z2 }\OperatorTok{=}\NormalTok{ np.delete(z, i, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+\NormalTok{            p\_z }\OperatorTok{=}\NormalTok{ []}
+\NormalTok{            g }\OperatorTok{=}\NormalTok{ []}
+            \ControlFlowTok{for}\NormalTok{ k }\KeywordTok{in}\NormalTok{ groups:}
+                \ControlFlowTok{if}\NormalTok{ np.}\BuiltInTok{sum}\NormalTok{([z2 }\OperatorTok{==}\NormalTok{ k]) }\OperatorTok{==} \DecValTok{0}\NormalTok{:}
+\NormalTok{                    g\_not.append(k)}
+                    \CommentTok{\# This is the last group so just move on}
+                    \ControlFlowTok{continue}
+                
+\NormalTok{                mu\_k }\OperatorTok{=}\NormalTok{ np.mean(d2[z2 }\OperatorTok{==}\NormalTok{ k], axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+                \CommentTok{\# cov\_k = np.cov(d2[z2 == k], rowvar=False)}
+\NormalTok{                n\_k }\OperatorTok{=}\NormalTok{ np.}\BuiltInTok{sum}\NormalTok{(z2 }\OperatorTok{==}\NormalTok{ k)}
+\NormalTok{                p\_z\_k }\OperatorTok{=}\NormalTok{ (n\_k }\OperatorTok{+}\NormalTok{ a}\OperatorTok{/}\NormalTok{K) }\OperatorTok{/}\NormalTok{ (N }\OperatorTok{+}\NormalTok{ a }\OperatorTok{{-}} \DecValTok{1}\NormalTok{)}
+\NormalTok{                S\_k }\OperatorTok{=}\NormalTok{ np.dot(np.transpose(d2[z2 }\OperatorTok{==}\NormalTok{ k] }\OperatorTok{{-}}\NormalTok{ mu\_k), d2[z2 }\OperatorTok{==}\NormalTok{ k] }\OperatorTok{{-}}\NormalTok{ mu\_k) }\OperatorTok{+}\NormalTok{ np.eye(D)}
+\NormalTok{                p\_x\_i }\OperatorTok{=}\NormalTok{ multivariate\_t(mu\_k, ((n\_k}\OperatorTok{+}\DecValTok{1}\NormalTok{) }\OperatorTok{/}\NormalTok{ (n\_k }\OperatorTok{*}\NormalTok{(n\_k }\OperatorTok{+}\NormalTok{ v }\OperatorTok{{-}}\NormalTok{ D }\OperatorTok{+} \DecValTok{1}\NormalTok{)))}\OperatorTok{*}\NormalTok{S\_k, n\_k}\OperatorTok{+}\NormalTok{v }\OperatorTok{{-}}\NormalTok{ D }\OperatorTok{+} \DecValTok{1}\NormalTok{).pdf(data[i,])}
+\NormalTok{                p\_z\_k }\OperatorTok{=}\NormalTok{ p\_z\_k }\OperatorTok{*}\NormalTok{ p\_x\_i}
+\NormalTok{                g.append(k)}
+\NormalTok{                p\_z.append(p\_z\_k)}
+            
+            \CommentTok{\# Now consider new component}
+\NormalTok{            p\_z\_k }\OperatorTok{=}\NormalTok{ (a }\OperatorTok{/} \BuiltInTok{len}\NormalTok{(groups)) }\OperatorTok{/}\NormalTok{ (N }\OperatorTok{+}\NormalTok{ (a}\OperatorTok{/}\BuiltInTok{len}\NormalTok{(groups)) }\OperatorTok{{-}} \DecValTok{1}\NormalTok{)}
+\NormalTok{            p\_x\_i }\OperatorTok{=}\NormalTok{ multivariate\_t([}\DecValTok{0}\NormalTok{ ,}\DecValTok{0}\NormalTok{], np.eye(D), v }\OperatorTok{{-}}\NormalTok{ D }\OperatorTok{+} \DecValTok{1}\NormalTok{).pdf(data[i,])}
+\NormalTok{            p\_z\_k }\OperatorTok{=}\NormalTok{ p\_z\_k }\OperatorTok{*}\NormalTok{ p\_x\_i}
+\NormalTok{            g.append(k}\OperatorTok{+}\DecValTok{1}\NormalTok{)}
+\NormalTok{            p\_z.append(p\_z\_k)}
+            \CommentTok{\# Standardize prob vector p(z\_i = k)}
+\NormalTok{            p\_z }\OperatorTok{=}\NormalTok{ p\_z }\OperatorTok{/}\NormalTok{ np.}\BuiltInTok{sum}\NormalTok{(p\_z)}
+\NormalTok{            z[i] }\OperatorTok{=}\NormalTok{ np.random.choice(g, }\DecValTok{1}\NormalTok{, replace}\OperatorTok{=}\VariableTok{True}\NormalTok{, p }\OperatorTok{=}\NormalTok{ p\_z)}
+\NormalTok{        df }\OperatorTok{=}\NormalTok{ pd.DataFrame(\{}
+            \StringTok{\textquotesingle{}z\textquotesingle{}}\NormalTok{: z,}
+\NormalTok{        \}).groupby([}\StringTok{\textquotesingle{}z\textquotesingle{}}\NormalTok{]).size().reset\_index(name}\OperatorTok{=}\StringTok{\textquotesingle{}counts\textquotesingle{}}\NormalTok{)}
+        \CommentTok{\# Rename clusters to reindex to zero}
+        \CommentTok{\# z and z\_new are the same thing, but z\_new has cluster names from 0 {-} K}
+        \CommentTok{\# where z has cluster names \textgreater{} K. This can be a problem when using the cluster}
+        \CommentTok{\# name to subset a list of colors (which is why we rename them)}
+\NormalTok{        lookup }\OperatorTok{=}\NormalTok{ df.to\_dict()[}\StringTok{\textquotesingle{}z\textquotesingle{}}\NormalTok{]}
+\NormalTok{        lookup }\OperatorTok{=} \BuiltInTok{dict}\NormalTok{((v,k) }\ControlFlowTok{for}\NormalTok{ k, v }\KeywordTok{in}\NormalTok{ lookup.items()) }
+\NormalTok{        z\_new }\OperatorTok{=}\NormalTok{ np.array([lookup.get(i) }\ControlFlowTok{for}\NormalTok{ i }\KeywordTok{in}\NormalTok{ z])}
+    \ControlFlowTok{return}\NormalTok{ z, df, z\_new}
+
+\NormalTok{z\_pred, df, z\_new }\OperatorTok{=}\NormalTok{ collapsed\_gibbs\_IGMM(data, }\DecValTok{1}\NormalTok{, }\DecValTok{10}\NormalTok{, K}\OperatorTok{=}\DecValTok{5}\NormalTok{, iters}\OperatorTok{=}\DecValTok{50}\NormalTok{)}
+
+\NormalTok{fig, ax }\OperatorTok{=}\NormalTok{ plt.subplots()}
+\CommentTok{\# Given that we expect 3 clusters, we assume we won\textquotesingle{}t need more than 6 colors}
+\NormalTok{cols }\OperatorTok{=}\NormalTok{ [}\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{, }\StringTok{"green"}\NormalTok{, }\StringTok{"grey"}\NormalTok{, }\StringTok{"yellow"}\NormalTok{, }\StringTok{"black"}\NormalTok{]}
+\CommentTok{\# Filter down to required colors. }
+\NormalTok{cols1 }\OperatorTok{=}\NormalTok{ [cols[i] }\ControlFlowTok{for}\NormalTok{ i, v }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(np.unique(z\_new))]}
+\BuiltInTok{print}\NormalTok{(cols)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## ['red', 'blue', 'green', 'grey', 'yellow', 'black']
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\NormalTok{ i, v }\KeywordTok{in} \BuiltInTok{enumerate}\NormalTok{(cols1):}
+\NormalTok{    d2 }\OperatorTok{=}\NormalTok{ data[np.array(z\_new) }\OperatorTok{==}\NormalTok{ i,:]}
+\NormalTok{    ax.scatter(d2[:,}\DecValTok{0}\NormalTok{], d2[:,}\DecValTok{1}\NormalTok{], color}\OperatorTok{=}\NormalTok{v, alpha }\OperatorTok{=} \FloatTok{.6}\NormalTok{, label }\OperatorTok{=}\NormalTok{ v)}
+    \ControlFlowTok{if}\NormalTok{ i }\KeywordTok{in} \BuiltInTok{range}\NormalTok{(}\DecValTok{3}\NormalTok{):}
+\NormalTok{        ax.contour(x,y, multivariate\_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend}\OperatorTok{=}\StringTok{\textquotesingle{}both\textquotesingle{}}\NormalTok{)}
+
+
+\NormalTok{fig.suptitle(}\SpecialStringTok{f"Collapsed Gibbs for Infinite GMM, }\SpecialCharTok{\{df.}\NormalTok{shape[}\DecValTok{0}\NormalTok{]}\SpecialCharTok{\}}\SpecialStringTok{ Clusters Found"}\NormalTok{)}
+\NormalTok{ax.grid()}
+\NormalTok{fig.legend()}
+\NormalTok{fig.savefig(}\StringTok{"collapsed\_gibbs\_igmm.png"}\NormalTok{)}
+\NormalTok{plt.close(fig)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics[width=0.75\linewidth,height=0.75\textheight]{collapsed_gibbs_igmm} \end{center}
+
+Note that we do have a few extra clusters here, but for the most part
+our output looks pretty good. With our gibbs sampler, we will continue
+to add and remove clusters but we've clearly converged to approximately
+3 total clusters.
+
+\end{document}

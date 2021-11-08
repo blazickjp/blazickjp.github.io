@@ -2,15 +2,17 @@
 title: "Extending GMM Gibbs Sampling to K-Components"
 author: "Joseph Blazick"
 date: '2020-10-17'
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 categories: []
 tags: []
 Description: ''
 Tags: []
 Categories: []
 DisableComments: no
-link-citations: true
-bibliography: [../bib.bib]
+link-citations: yes
+bibliography: ../bib.bib
 ---
 ## Introduction
 
@@ -37,6 +39,8 @@ from scipy.stats import invgamma, norm, dirichlet, multivariate_normal
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from distcan import InverseGamma
+import seaborn as sns
+import pandas as pd
 
 def data_gen(mu, sigmas, phi, n):
     """
@@ -84,6 +88,39 @@ p(\pi_1, ..., \pi_k | \pmb{\alpha}) = \frac{\Gamma\left(\sum_{j=1}^K\alpha_j\rig
 $$
 
 We can generate samples from the Dirichlet Distribution with various parameters to better understand how the distribution works. The top left plot shows the case when $\pmb{\alpha}$ is equal for all $k$, but small. This results in the samples over each group to be pushed towards 1 or 0. In the extreme, the samples of vector $\pmb{\pi}$ has one group with $\pi_j = 1$ and the rest with $\pi_{\neg j} = 0$. In the other plots where $\pmb{\alpha}$ is equal across all $k$, we can see that increasing the magnitude of $\pmb{\alpha}$ reduces the variance in the samples of $\pmb{\pi}$ The last plot demonstrates how varying $\alpha_j$ changes the mean of each $\pi_j$ being sampled based on the proportions of $\alpha_j$ compared to $\alpha_{\neg j}$ 
+
+```{python}
+# Plot Dirichlet Distribution
+num_samples = 100
+num_classes = 4
+alpha = [
+    [.1,.1,.1,.1],
+    [1,1,1,1],
+    [100,100,100,100],
+    [1,1,5,10]
+]
+
+fig, ((ax1,ax2),(ax3,ax4)) = plt.subplots(2,2, sharey=True)
+
+for j, params in enumerate(alpha):
+    out = np.empty([num_samples, num_classes])
+    for i in range(num_samples):
+        out[i,:] = dirichlet(params).rvs()
+
+    sns.set_style("whitegrid")
+    out = pd.DataFrame(out,columns=["K1", "K2", "K3", "K4"]).melt(var_name="Group", value_name="Probability")
+    sns.swarmplot(x="Group", y="Probability", data=out, ax=eval(f"ax{j+1}"), alpha=0.5)
+    sns.boxplot(x="Group", y="Probability", data=out,ax=eval(f"ax{j+1}"),
+            showcaps=False,boxprops={'facecolor':'None'},
+            showfliers=False,whiskerprops={'linewidth':0})
+    eval(f"ax{j+1}").set_title(f"Alpha = {params}")
+
+fig.suptitle("Dirichlet Distribution Samples", fontsize=15)
+```
+
+```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
+knitr::include_graphics("dp.png")
+```
 
 
 ## Deriving Complete Conditional of $\pi$  
