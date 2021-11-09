@@ -234,7 +234,34 @@ plt.savefig(&quot;mix2.png&quot;)</code></pre>
 p(\pi_1, ..., \pi_k | \pmb{\alpha}) = \frac{\Gamma\left(\sum_{j=1}^K\alpha_j\right)}{\prod_{j=1}^k\Gamma(\alpha_j)}\prod_{j=1}^K\pi_j^{\alpha_j-1}
 \]</span></p>
 <p>We can generate samples from the Dirichlet Distribution with various parameters to better understand how the distribution works. The top left plot shows the case when <span class="math inline">\(\pmb{\alpha}\)</span> is equal for all <span class="math inline">\(k\)</span>, but small. This results in the samples over each group to be pushed towards 1 or 0. In the extreme, the samples of vector <span class="math inline">\(\pmb{\pi}\)</span> has one group with <span class="math inline">\(\pi_j = 1\)</span> and the rest with <span class="math inline">\(\pi_{\neg j} = 0\)</span>. In the other plots where <span class="math inline">\(\pmb{\alpha}\)</span> is equal across all <span class="math inline">\(k\)</span>, we can see that increasing the magnitude of <span class="math inline">\(\pmb{\alpha}\)</span> reduces the variance in the samples of <span class="math inline">\(\pmb{\pi}\)</span> The last plot demonstrates how varying <span class="math inline">\(\alpha_j\)</span> changes the mean of each <span class="math inline">\(\pi_j\)</span> being sampled based on the proportions of <span class="math inline">\(\alpha_j\)</span> compared to <span class="math inline">\(\alpha_{\neg j}\)</span></p>
-<p><img src="http://blazickjp.github.io/post/2021-04-10-k-comp-gmm/index.en_files/figure-html/unnamed-chunk-3-1.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
+<pre class="python"><code># Plot Dirichlet Distribution
+num_samples = 100
+num_classes = 4
+alpha = [
+    [.1,.1,.1,.1],
+    [1,1,1,1],
+    [100,100,100,100],
+    [1,1,5,10]
+]
+
+fig, ((ax1,ax2),(ax3,ax4)) = plt.subplots(2,2, sharey=True)
+
+for j, params in enumerate(alpha):
+    out = np.empty([num_samples, num_classes])
+    for i in range(num_samples):
+        out[i,:] = dirichlet(params).rvs()
+
+    sns.set_style(&quot;whitegrid&quot;)
+    out = pd.DataFrame(out,columns=[&quot;K1&quot;, &quot;K2&quot;, &quot;K3&quot;, &quot;K4&quot;]).melt(var_name=&quot;Group&quot;, value_name=&quot;Probability&quot;)
+    sns.swarmplot(x=&quot;Group&quot;, y=&quot;Probability&quot;, data=out, ax=eval(f&quot;ax{j+1}&quot;), alpha=0.5)
+    sns.boxplot(x=&quot;Group&quot;, y=&quot;Probability&quot;, data=out,ax=eval(f&quot;ax{j+1}&quot;),
+            showcaps=False,boxprops={&#39;facecolor&#39;:&#39;None&#39;},
+            showfliers=False,whiskerprops={&#39;linewidth&#39;:0})
+    eval(f&quot;ax{j+1}&quot;).set_title(f&quot;Alpha = {params}&quot;)
+
+fig.suptitle(&quot;Dirichlet Distribution Samples&quot;, fontsize=15)</code></pre>
+<p><img src="http://blazickjp.github.io/post/2021-04-10-k-comp-gmm/index.en_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="dp.png" width="75%" height="75%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="deriving-complete-conditional-of-pi" class="section level2">
 <h2>Deriving Complete Conditional of <span class="math inline">\(\pi\)</span></h2>

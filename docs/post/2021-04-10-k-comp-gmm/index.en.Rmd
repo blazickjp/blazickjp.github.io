@@ -89,7 +89,8 @@ $$
 
 We can generate samples from the Dirichlet Distribution with various parameters to better understand how the distribution works. The top left plot shows the case when $\pmb{\alpha}$ is equal for all $k$, but small. This results in the samples over each group to be pushed towards 1 or 0. In the extreme, the samples of vector $\pmb{\pi}$ has one group with $\pi_j = 1$ and the rest with $\pi_{\neg j} = 0$. In the other plots where $\pmb{\alpha}$ is equal across all $k$, we can see that increasing the magnitude of $\pmb{\alpha}$ reduces the variance in the samples of $\pmb{\pi}$ The last plot demonstrates how varying $\alpha_j$ changes the mean of each $\pi_j$ being sampled based on the proportions of $\alpha_j$ compared to $\alpha_{\neg j}$ 
 
-```{python, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
+
+```{python}
 # Plot Dirichlet Distribution
 num_samples = 100
 num_classes = 4
@@ -118,6 +119,9 @@ for j, params in enumerate(alpha):
 fig.suptitle("Dirichlet Distribution Samples", fontsize=15)
 ```
 
+```{r, echo=FALSE, fig.align='center', out.height="75%", out.width="75%"}
+knitr::include_graphics("dp.png")
+```
 
 ## Deriving Complete Conditional of $\pi$  
 
