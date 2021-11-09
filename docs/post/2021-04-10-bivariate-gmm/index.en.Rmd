@@ -1,5 +1,5 @@
 ---
-title: Extending K-Component GMM to the Bivariate Case
+title: Extending the Gibbs Sampler to Multivariate Inputs
 author: Joseph Blazick
 date: '2020-11-02'
 slug: []
@@ -213,7 +213,7 @@ def update_z(data, mu, cov, pi):
 
 def gibbs(data, iters, burnin, k):
     """
-    Run Gibb's Sampling for Mixture of k Bivariate Gaussians. Initial States are sampled from Priors
+    Run Gibb's Sampling for Mixture of k Bivariate Gaussians. Initial States are sampled from        Priors
     """
     # Set initial guesses based on priors
     alpha = [1,1,1]

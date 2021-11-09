@@ -1,5 +1,5 @@
 ---
-title: Extending K-Component GMM to the Bivariate Case
+title: Extending the Gibbs Sampler to Multivariate Inputs
 author: Joseph Blazick
 date: '2020-11-02'
 slug: []
@@ -71,9 +71,9 @@ fig, ax = plt.subplots()
 ax.scatter(data[:,0], data[:,1], alpha = .6)
 for i in range(len(mu)):
     ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a57d7310&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a59c1ca0&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a59c1b80&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50d180160&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50d28ac40&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50d278f70&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;k3.png&quot;)</code></pre>
@@ -189,7 +189,7 @@ def update_z(data, mu, cov, pi):
 
 def gibbs(data, iters, burnin, k):
     &quot;&quot;&quot;
-    Run Gibb&#39;s Sampling for Mixture of k Bivariate Gaussians. Initial States are sampled from Priors
+    Run Gibb&#39;s Sampling for Mixture of k Bivariate Gaussians. Initial States are sampled from        Priors
     &quot;&quot;&quot;
     # Set initial guesses based on priors
     alpha = [1,1,1]
@@ -235,9 +235,9 @@ for i in range(3):
         multivariate_normal(mu_fitted[i,:], 
         cov_fitted[i,:,:]).pdf(pos), 
         extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a6fbdf40&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a6fbd1c0&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a6fbd130&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50f164490&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50f197190&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50f171700&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Fitted Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;fitted.png&quot;)</code></pre>

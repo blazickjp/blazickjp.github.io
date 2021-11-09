@@ -28,7 +28,7 @@ To motivate our exploration of DP’s, we can imagine a situation where we would
     </item>
     
     <item>
-      <title>Extending K-Component GMM to the Bivariate Case</title>
+      <title>Extending the Gibbs Sampler to Multivariate Inputs</title>
       <link>http://blazickjp.github.io/post/2021-04-10-bivariate-gmm/</link>
       <pubDate>Mon, 02 Nov 2020 00:00:00 +0000</pubDate>
       
@@ -40,7 +40,7 @@ We can generate our data using a similar method as before, except we extend \(\p
     </item>
     
     <item>
-      <title>Extending GMM Gibbs Sampling to K-Components</title>
+      <title>Extending the Gibbs Sampler to K-Components</title>
       <link>http://blazickjp.github.io/post/2021-04-10-k-comp-gmm/</link>
       <pubDate>Sat, 17 Oct 2020 00:00:00 +0000</pubDate>
       

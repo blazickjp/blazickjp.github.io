@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme=""><head>
-    <title> Joseph Blazick | Extending K-Component GMM to the Bivariate Case </title>
+    <title> Joseph Blazick | Extending the Gibbs Sampler to Multivariate Inputs </title>
 
     
     <meta charset="utf-8"><meta name="generator" content="Hugo 0.82.0" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -62,7 +62,7 @@
     <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="http://blazickjp.github.io/105"/>
 
-<meta name="twitter:title" content="Extending K-Component GMM to the Bivariate Case"/>
+<meta name="twitter:title" content="Extending the Gibbs Sampler to Multivariate Inputs"/>
 <meta name="twitter:description" content="Introduction In my previous post, we extended our Gibbs Sampler to handle any number of \(K\) Components and fit our model in the case where \(K=4\). We can now move on and extend our model to handle the Multivariate case. I stick to demonstrating the model on the bivariate case for simplicity and to better enable visualization of the results.
  K-Component Bivariate GMM The K-Component Bivariate is defined exactly like the univariate case, \(p(x|\theta) = \sum_{j=1}^K\pi_j\phi_{\theta_j}(x)\) except that \(\phi_{\theta_j}(x)\) is defined by the multivariate Gaussian distribution:
 \[ \begin{align*} \phi_{\theta_j}(x) &amp; = \frac{1}{\sqrt{2\pi\left|\Sigma_j\right|}}\exp^{\frac{1}{2}(x-\pmb{\mu_j})^T\Sigma^{-1}(x-\pmb{\mu_j})} \end{align*} \]
@@ -157,7 +157,7 @@ We can generate our data using a similar method as before, except we extend \(\p
         <div class="post-content">
             
             <div class="post-title">
-                <h3>Extending K-Component GMM to the Bivariate Case</h3>
+                <h3>Extending the Gibbs Sampler to Multivariate Inputs</h3>
                 
                     <div class="info">
                         <em class="fas fa-calendar-day"></em>
@@ -228,9 +228,9 @@ fig, ax = plt.subplots()
 ax.scatter(data[:,0], data[:,1], alpha = .6)
 for i in range(len(mu)):
     ax.contour(x,y, multivariate_normal(mu[i,:], cov[i,:,:]).pdf(pos), extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a57d7310&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a59c1ca0&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a59c1b80&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50d180160&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50d28ac40&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50d278f70&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;k3.png&quot;)</code></pre>
@@ -346,7 +346,7 @@ def update_z(data, mu, cov, pi):
 
 def gibbs(data, iters, burnin, k):
     &quot;&quot;&quot;
-    Run Gibb&#39;s Sampling for Mixture of k Bivariate Gaussians. Initial States are sampled from Priors
+    Run Gibb&#39;s Sampling for Mixture of k Bivariate Gaussians. Initial States are sampled from        Priors
     &quot;&quot;&quot;
     # Set initial guesses based on priors
     alpha = [1,1,1]
@@ -392,9 +392,9 @@ for i in range(3):
         multivariate_normal(mu_fitted[i,:], 
         cov_fitted[i,:,:]).pdf(pos), 
         extend=&#39;both&#39;)</code></pre>
-<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a6fbdf40&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a6fbd1c0&gt;
-## &lt;matplotlib.contour.QuadContourSet object at 0x7fd3a6fbd130&gt;</code></pre>
+<pre><code>## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50f164490&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50f197190&gt;
+## &lt;matplotlib.contour.QuadContourSet object at 0x7fb50f171700&gt;</code></pre>
 <pre class="python"><code>fig.suptitle(&quot;K=3 Fitted Bivariate Gaussian Distributions Data&quot;)
 ax.grid()
 fig.savefig(&quot;fitted.png&quot;)</code></pre>
